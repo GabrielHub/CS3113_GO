@@ -10,6 +10,9 @@
 
 #include "ShaderProgram.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #ifdef _WINDOWS
 #define RESOURCE_FOLDER ""
 #else
@@ -17,6 +20,26 @@
 #endif
 
 SDL_Window* displayWindow;
+
+GLuint LoadTexture(const char* filePath) {
+	int w, h, comp;
+	unsigned char* image = stbi_load(filePath, &w, &h, &comp, STBI_rgb_alpha);
+
+	if (image == NULL) {
+		std::cout << "unable to load image. Make sure the path is correct \n";
+		assert(false);
+	}
+
+	GLuint retTexture;
+	glGenTextures(1, &retTexture);
+	glBindTexture(GL_TEXTURE_2D, retTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	stbi_image_free(image);
+	return retTexture;
+}
 
 int main(int argc, char *argv[])
 {
@@ -33,11 +56,18 @@ int main(int argc, char *argv[])
 
 	glViewport(0, 0, 1280, 720);
 
+	//loading shaders
 	ShaderProgram program;
-	program.Load(RESOURCE_FOLDER"vertex.glsl", RESOURCE_FOLDER"fragment.glsl");
+	program.Load(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
+
+	//load Textures
+	GLuint texture1 = LoadTexture(RESOURCE_FOLDER"tex1.jpg");
+	GLuint texture2 = LoadTexture(RESOURCE_FOLDER"tex2.png");
+	GLuint texture3 = LoadTexture(RESOURCE_FOLDER"tex3.jpg");
 
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
 
 	projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
 
@@ -46,8 +76,15 @@ int main(int argc, char *argv[])
     SDL_Event event;
     bool done = false;
 
+	//blending code
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	//Time Code
 	float lastFrameTicks = 0.0f;
+
+	//Transformation var
+	float angle = 0.0f;
 
     while (!done) {
         while (SDL_PollEvent(&event)) {
@@ -56,35 +93,58 @@ int main(int argc, char *argv[])
             }
         }
 
+		
+
 		//Time code
 		float ticks = (float)SDL_GetTicks() / 1000.0f;
 		float elapsed = ticks - lastFrameTicks;
 		lastFrameTicks = ticks;
 
 		//Screen Color
-		glClearColor(0.4f, 0.2f, 0.4f, 1.0f);
+		glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
 		//loop code
-		
 		program.SetProjectionMatrix(projectionMatrix);
 		program.SetViewMatrix(viewMatrix);
 
-		float vertices[] = { 0.5f, -0.5f, 0.0f, 0.5f, -0.5f, -0.5f };
+		glBindTexture(GL_TEXTURE_2D, texture1);
+
+		float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
 		glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
 		glEnableVertexAttribArray(program.positionAttribute);
 
+		float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
+		glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+		glEnableVertexAttribArray(program.texCoordAttribute);
+
 		//Color
-		program.SetColor(0.2f, 0.8f, 0.4f, 1.0f);
+		program.SetColor(0.5f, 0.4f, 0.4f, 1.0f);
 
 		//Translations
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, 1.0f));
+		modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(angle, 0.0f, 1.0f));
 		program.SetModelMatrix(modelMatrix);
 		//
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		//modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.0f, 0.0f));
+		program.SetModelMatrix(modelMatrix);
+		//modelMatrix = glm::rotate(modelMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		angle += elapsed;
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glBindTexture(GL_TEXTURE_2D, texture3);
+		modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.3f, 0.0f));
+		program.SetModelMatrix(modelMatrix);
+		//modelMatrix = glm::scale(modelMatrix, glm::vec3(angle, angle, 1.0f));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
 		glDisableVertexAttribArray(program.positionAttribute);
+		glDisableVertexAttribArray(program.texCoordAttribute);
 
         SDL_GL_SwapWindow(displayWindow);
     }
