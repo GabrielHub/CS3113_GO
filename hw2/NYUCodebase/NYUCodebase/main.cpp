@@ -63,9 +63,9 @@ glm::mat4 modelMatrixPaddle = glm::mat4(1.0f);
 glm::mat4 modelMatrixBall = glm::mat4(1.0f);
 //object var
 float p1x = 0.0;
-float p2x = 0.0;
+//float p2x = 0.0;
 float p1y = 0.0;
-float p2y = 0.0;
+//float p2y = 0.0;
 float velocity = 3.0f;
 
 //Setup Function
@@ -107,15 +107,10 @@ void Event() {
 				modelMatrixPaddle = glm::translate(modelMatrixPaddle, glm::vec3(0.0f, -velocity * elapsed, 0.0f));
 			}
 		}
-		else if (event.type == SDL_MOUSEBUTTONDOWN) {
-			// event.x is the click x position
-			// event.y is the click y position
-			// event.button.button is the mouse button that was click
-		}
 	}
 }
 
-//Updating things in game 
+//Updating and Rendering
 void Update() {
 	//Time code
 	ticks = (float)SDL_GetTicks() / 1000.0f;
@@ -126,12 +121,19 @@ void Update() {
 	program.SetModelMatrix(modelMatrixPaddle);
 	glBindTexture(GL_TEXTURE_2D, paddleTex);
 	//creating first object
-	float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
+	float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 }; //vertex array counter clockwise
 	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
 	glEnableVertexAttribArray(program.positionAttribute);
 	float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
 	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
 	glEnableVertexAttribArray(program.texCoordAttribute);
+
+	//creating second object
+
+	//Set position of both paddles
+	//modelMatrixPaddle = glm::mat4(1.0f);
+	//modelMatrixPaddle = glm::translate(modelMatrixPaddle, glm::vec3(-2.0f, 0.0f, 0.0f));
+	//program.SetModelMatrix(modelMatrixPaddle);
 
 	//Screen Color
 	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
