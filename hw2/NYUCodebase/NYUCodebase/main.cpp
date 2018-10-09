@@ -19,8 +19,6 @@
 #define RESOURCE_FOLDER "NYUCodebase.app/Contents/Resources/"
 #endif
 
-SDL_Window* displayWindow;
-
 
 //Load Texture Function
 GLuint LoadTexture(const char* filePath) {
@@ -43,33 +41,35 @@ GLuint LoadTexture(const char* filePath) {
 	return retTexture;
 }
 
+// GLOBAL VARIABLES :(
+SDL_Window* displayWindow;
+//loading shaders
+ShaderProgram program;
+//load Textures
+GLuint paddleTex = LoadTexture(RESOURCE_FOLDER"paddle.png");
+//Time Code
+float lastFrameTicks = 0.0f;
+float ticks;
+float elapsed;
+//Transformation var
+float angle = 0.0f;
+//Event var
+SDL_Event event;
+//Loop var
+bool done = false;
+glm::mat4 projectionMatrix = glm::mat4(1.0f);
+glm::mat4 viewMatrix = glm::mat4(1.0f);
+glm::mat4 modelMatrixPaddle = glm::mat4(1.0f);
+glm::mat4 modelMatrixBall = glm::mat4(1.0f);
+//object var
+float p1x = 0.0;
+float p2x = 0.0;
+float p1y = 0.0;
+float p2y = 0.0;
+float velocity = 3.0f;
+
 //Setup Function
 void Setup() {
-
-}
-
-//Updating things in game 
-void Update() {
-
-}
-
-//Check for events
-void Event() {
-
-}
-
-//Render once to screen
-void Render() {
-
-}
-
-//Clean up memory
-void Clean() {
-
-}
-
-int main(int argc, char *argv[])
-{
 	SDL_Init(SDL_INIT_VIDEO);
 	displayWindow = SDL_CreateWindow("GO", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
 	SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
@@ -80,112 +80,90 @@ int main(int argc, char *argv[])
 #endif
 
 	//setup
-
 	glViewport(0, 0, 1280, 720);
-
-	//loading shaders
-	ShaderProgram program;
 	program.Load(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
-
-	//load Textures
-	GLuint texture1 = LoadTexture(RESOURCE_FOLDER"tex1.jpg");
-	GLuint texture2 = LoadTexture(RESOURCE_FOLDER"tex2.png");
-	GLuint texture3 = LoadTexture(RESOURCE_FOLDER"tex3.jpg");
-
-	glm::mat4 projectionMatrix = glm::mat4(1.0f);
-	glm::mat4 viewMatrix = glm::mat4(1.0f);
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-
-	projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
-
-	glUseProgram(program.programID);
-
-    SDL_Event event;
-    bool done = false;
-
 	//blending code
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//Time Code
-	float lastFrameTicks = 0.0f;
+	glUseProgram(program.programID);
 
-	//Transformation var
-	float angle = 0.0f;
+	projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
+}
 
-    while (!done) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-                done = true;
-            }
-			else if (event.type == SDL_MOUSEMOTION) {
-				//positionX
-				//positionY
-				//for mouse movement
+//Check for events
+void Event() {
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+			done = true;
+		}
+		else if (event.type == SDL_KEYDOWN) {
+			if (event.key.keysym.scancode == SDL_SCANCODE_W) {
+				p1y += velocity * elapsed;
+				modelMatrixPaddle = glm::translate(modelMatrixPaddle, glm::vec3(0.0f, velocity * elapsed, 0.0f));
 			}
-			else if (event.type == SDL_MOUSEBUTTONDOWN) {
-				// event.x is the click x position
-				// event.y is the click y position
-				// event.button.button is the mouse button that was click
+			else if (event.key.keysym.scancode == SDL_SCANCODE_S) {
+				p1y -= velocity * elapsed;
+				modelMatrixPaddle = glm::translate(modelMatrixPaddle, glm::vec3(0.0f, -velocity * elapsed, 0.0f));
 			}
-        }
+		}
+		else if (event.type == SDL_MOUSEBUTTONDOWN) {
+			// event.x is the click x position
+			// event.y is the click y position
+			// event.button.button is the mouse button that was click
+		}
+	}
+}
 
-		
+//Updating things in game 
+void Update() {
+	//Time code
+	ticks = (float)SDL_GetTicks() / 1000.0f;
+	elapsed = ticks - lastFrameTicks;
+	lastFrameTicks = ticks;
 
-		//Time code
-		float ticks = (float)SDL_GetTicks() / 1000.0f;
-		float elapsed = ticks - lastFrameTicks;
-		lastFrameTicks = ticks;
+	//Paddle Setup
+	program.SetModelMatrix(modelMatrixPaddle);
+	glBindTexture(GL_TEXTURE_2D, paddleTex);
+	//creating first object
+	float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
+	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+	glEnableVertexAttribArray(program.positionAttribute);
+	float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
+	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+	glEnableVertexAttribArray(program.texCoordAttribute);
 
-		//Screen Color
-		glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+	//Screen Color
+	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	//Color
+	//program.SetColor(0.5f, 0.4f, 0.4f, 1.0f);
+	//Set camera view
+	program.SetProjectionMatrix(projectionMatrix);
+	program.SetViewMatrix(viewMatrix);
 
-		//loop code
-		program.SetProjectionMatrix(projectionMatrix);
-		program.SetViewMatrix(viewMatrix);
+	//Draw
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
 
-		glBindTexture(GL_TEXTURE_2D, texture1);
+//Clean up memory
+void Clean() {
+	glDisableVertexAttribArray(program.positionAttribute);
+	glDisableVertexAttribArray(program.texCoordAttribute);
 
-		float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
-		glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
-		glEnableVertexAttribArray(program.positionAttribute);
+	SDL_GL_SwapWindow(displayWindow);
+}
 
-		float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
-		glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
-		glEnableVertexAttribArray(program.texCoordAttribute);
+int main(int argc, char *argv[])
+{
+	Setup();
 
-		//Color
-		program.SetColor(0.5f, 0.4f, 0.4f, 1.0f);
+	while (!done) {
+		Event();
+		Update();
+		Clean();
+	}
 
-		//Translations
-		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(angle, 0.0f, 1.0f));
-		program.SetModelMatrix(modelMatrix);
-		//
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		//modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.0f, 0.0f));
-		program.SetModelMatrix(modelMatrix);
-		//modelMatrix = glm::rotate(modelMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-		angle += elapsed;
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindTexture(GL_TEXTURE_2D, texture3);
-		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.3f, 0.0f));
-		program.SetModelMatrix(modelMatrix);
-		//modelMatrix = glm::scale(modelMatrix, glm::vec3(angle, angle, 1.0f));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glDisableVertexAttribArray(program.positionAttribute);
-		glDisableVertexAttribArray(program.texCoordAttribute);
-
-        SDL_GL_SwapWindow(displayWindow);
-    }
-    
-    SDL_Quit();
-    return 0;
+	SDL_Quit();
+	return 0;
 }
