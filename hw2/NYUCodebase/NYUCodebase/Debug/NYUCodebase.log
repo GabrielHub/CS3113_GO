@@ -1,5 +1,8 @@
-﻿  main.cpp
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw2\nyucodebase\nyucodebase\main.cpp(116): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw2\nyucodebase\nyucodebase\main.cpp(221): warning C4804: '<=': unsafe use of type 'bool' in operation
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw2\nyucodebase\nyucodebase\main.cpp(224): warning C4804: '<=': unsafe use of type 'bool' in operation
-  NYUCodebase.vcxproj -> Z:\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw2\NYUCodebase\Debug\NYUCodebase.exe
+﻿  ShaderProgram.cpp
+  main.cpp
+c:\users\go\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw2\nyucodebase\nyucodebase\main.cpp(116): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\go\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw2\nyucodebase\nyucodebase\main.cpp(221): warning C4804: '<=': unsafe use of type 'bool' in operation
+c:\users\go\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw2\nyucodebase\nyucodebase\main.cpp(224): warning C4804: '<=': unsafe use of type 'bool' in operation
+  Generating Code...
+  LINK : C:\Users\GO\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw2\NYUCodebase\Debug\NYUCodebase.exe not found or not built by the last incremental link; performing full link
+  NYUCodebase.vcxproj -> C:\Users\GO\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw2\NYUCodebase\Debug\NYUCodebase.exe
