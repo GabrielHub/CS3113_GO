@@ -27,6 +27,27 @@
 	Template: Updated for homework 2
 */
 
+// GLOBAL VARIABLES for the game world
+SDL_Window* displayWindow;
+//loading shaders
+ShaderProgram program;
+//Texture init, example: GLuint example;
+//Time Code
+/*Time Code
+OLD CODE:
+float lastFrameTicks = 0.0f;
+float ticks;*/
+float elapsed;
+float accumulator = 0.0f;
+//Event var
+SDL_Event event;
+//Loop var
+bool done = false;
+//Matrices
+glm::mat4 projectionMatrix = glm::mat4(1.0f);
+glm::mat4 viewMatrix = glm::mat4(1.0f);
+glm::mat4 modelMatrix = glm::mat4(1.0f); //Model Matrices
+
 class Object {
 public:
 	Object(float x, float y, float rotation, int textureID, float width, float height, float velocity, float dirX, float dirY) : x(x), y(y), rotation(rotation), textureID(textureID), width(width), height(height), velocity(velocity), dirX(dirX), dirY(dirY) {}
@@ -42,30 +63,33 @@ public:
 			// orig coord: -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5
 		};
 
-		float uv[] = {0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f};
-
 		glVertexAttribPointer(p.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
 		glEnableVertexAttribArray(p.positionAttribute);
-		glVertexAttribPointer(p.texCoordAttribute, 2, GL_FLOAT, false, 0, vertices);
+
+		float uv[] = {0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f};
+		
+		glVertexAttribPointer(p.texCoordAttribute, 2, GL_FLOAT, false, 0, uv);
 		glEnableVertexAttribArray(p.texCoordAttribute);
 		glBindTexture(GL_TEXTURE_2D, textureID);
+
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+
 		glDisableVertexAttribArray(p.positionAttribute);
 		glDisableVertexAttribArray(p.texCoordAttribute);
 	}
 
-private:
+	//member var
 	float x;
 	float y;
 	float rotation;
-
 	int textureID;
 	float width;
 	float height;
-
 	float velocity;
 	float dirX;
 	float dirY;
+
+	//Added member var
 };
 
 //Load Texture Function
@@ -89,25 +113,6 @@ GLuint LoadTexture(const char* filePath) {
 	return retTexture;
 }
 
-// GLOBAL VARIABLES for the game world
-SDL_Window* displayWindow;
-//loading shaders
-ShaderProgram program;
-//init textures
-
-/*Time Code
-float lastFrameTicks = 0.0f;
-float ticks;*/
-float elapsed;
-float accumulator = 0.0f;
-//Event var
-SDL_Event event;
-//Loop var
-bool done = false;
-glm::mat4 projectionMatrix = glm::mat4(1.0f);
-glm::mat4 viewMatrix = glm::mat4(1.0f);
-glm::mat4 modelMatrix = glm::mat4(1.0f);
-
 //Setup Function
 void Setup() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -119,18 +124,21 @@ void Setup() {
 	glewInit();
 #endif
 
-	//setup
+	//Viewport and program setup
 	glViewport(0, 0, 1280, 720);
 	program.Load(RESOURCE_FOLDER "vertex_textured.glsl", RESOURCE_FOLDER "fragment_textured.glsl");
-	//blending code
+	glUseProgram(program.programID);
+	projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
+	//For Alpha Blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glUseProgram(program.programID);
+	//Load Textures
+	//Ex: example = LoadTexture(RESOURCE_FOLDER "example.example");
 
-	projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
-
-	//Create Objects
+	/* Create Objects, example:
+		Object example(xposition, yposition, rotation (angle), textureID, width, height, velocity, direction x, direction y);
+	*/
 }
 
 //Check for events
@@ -148,10 +156,19 @@ void Event() {
 
 //Updating
 void Update(float time) {
-	/*Time code
+	/* Time code, old example:
 	ticks = (float)SDL_GetTicks() / 1000.0f;
 	elapsed = ticks - lastFrameTicks;
 	lastFrameTicks = ticks;*/
+	//Set matrices
+	program.SetProjectionMatrix(projectionMatrix);
+	program.SetViewMatrix(viewMatrix);
+	program.SetViewMatrix(modelMatrix);
+
+	//Changes
+	/*
+		Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0); 
+	*/
 }
 
 void Render() {
@@ -159,14 +176,13 @@ void Render() {
 	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	//Set camera view
-	program.SetProjectionMatrix(projectionMatrix);
-	program.SetViewMatrix(viewMatrix);
+	//Draw Objects, example.draw(program)
 }
 
 //Clean up memory
 void Clean() {
-	
+	//glDisableVertexAttribArray(program.positionAttribute);
+	//glDisableVertexAttribArray(program.texCoordAttribute);
 }
 
 int main(int argc, char *argv[])
@@ -174,7 +190,6 @@ int main(int argc, char *argv[])
 	Setup();
 
 	while (!done) {
-
 		Event();
 
 		//60 FPS updated time code
@@ -191,11 +206,7 @@ int main(int argc, char *argv[])
 
 		Render();
 
-		glDisableVertexAttribArray(program.positionAttribute);
-		glDisableVertexAttribArray(program.texCoordAttribute);
-
 		SDL_GL_SwapWindow(displayWindow);
-		
 	}
 
 	Clean();
