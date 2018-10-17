@@ -75,11 +75,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SheetSprite.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SheetSprite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
