@@ -23,12 +23,13 @@
 #include "Game.h"
 #include "Object.h"
 #include "SheetSprite.h"
+
 //60FPS (1.0/60.0)
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
 
 /*
-	Template: Updated for homework 2
+	Template: Updated for homework 3
 */
 
 //Load Texture Function
@@ -74,10 +75,12 @@ void Setup(GameState &state) {
 
 	//Load Textures
 	//Ex: example = LoadTexture(RESOURCE_FOLDER "example.example");
+	state.test = LoadTexture(RESOURCE_FOLDER "test.jpg");
 
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), textureID, width, height, velocity, direction x, direction y);
 	*/
+	state.player = Object(0, 0, 0, state.test, 1, 1, 1, 1, 1);
 }
 
 //Process inputs
@@ -111,12 +114,13 @@ void Update(GameState &state, float time) {
 }
 
 //Render all objects in the game, render UI elements
-void Render(const GameState &state) {
+void Render(GameState &state) {
 	//Screen Color
 	//glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//Draw Objects, example.draw(program)
+	state.player.Draw(state.program);
 }
 
 //Clean up memory
@@ -127,7 +131,7 @@ void Clean() {
 
 int main(int argc, char *argv[])
 {
-	//Gamestate
+	//Gamestate also holds global variables
 	GameState state;
 
 	Setup(state);

@@ -7,6 +7,8 @@
 #include <SDL_image.h>
 #include "ShaderProgram.h"
 
+#include "Object.h"
+
 //GameState
 class GameState {
 public:
@@ -27,4 +29,9 @@ public:
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 modelMatrix = glm::mat4(1.0f); //Model Matrices
+
+	//Textures
+	GLuint test;
+
+	Object player;
 };

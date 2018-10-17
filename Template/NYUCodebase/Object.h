@@ -9,9 +9,10 @@
 
 class Object {
 public:
+	Object();
 	Object(float x, float y, float rotation, int textureID, float width, float height, float velocity, float dirX, float dirY);
 
-	void Draw(ShaderProgram &p);
+	void const Draw(ShaderProgram &p);
 
 	//member var
 	float x;

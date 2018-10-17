@@ -1,8 +1,10 @@
 #include "Object.h"
 
+Object::Object() {}
+
 Object::Object(float x, float y, float rotation, int textureID, float width, float height, float velocity, float dirX, float dirY) : x(x), y(y), rotation(rotation), textureID(textureID), width(width), height(height), velocity(velocity), dirX(dirX), dirY(dirY) {}
 
-void Object::Draw(ShaderProgram &p) {
+void const Object::Draw(ShaderProgram &p) {
 	float vertices[] = {
 			x + (-0.5f * width), y + (0.5f * height),
 			x + (-0.5f * width), y + (-0.5f * height),

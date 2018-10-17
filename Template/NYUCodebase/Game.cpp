@@ -1,3 +1,5 @@
 #include "Game.h"
 
-GameState::GameState() { }
+GameState::GameState() {
+	
+}
