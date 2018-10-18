@@ -32,6 +32,11 @@
 	Template: Updated for homework 3
 */
 
+enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
+//Gamestate also holds global variables
+GameState state;
+GameMode mode;
+
 //Load Texture Function
 GLuint LoadTexture(const char* filePath) {
 	int w, h, comp;
@@ -84,7 +89,7 @@ void Setup(GameState &state) {
 }
 
 //Process inputs
-void Event(GameState &state) {
+void Event() {
 	while (SDL_PollEvent(&state.event)) {
 		if (state.event.type == SDL_QUIT || state.event.type == SDL_WINDOWEVENT_CLOSE) {
 			state.done = true;
@@ -97,7 +102,7 @@ void Event(GameState &state) {
 }
 
 //Updating, Move all objects based on time and velocity
-void Update(GameState &state, float time) {
+void Update(float elapsed) {
 	/* Time code, old example:
 	ticks = (float)SDL_GetTicks() / 1000.0f;
 	elapsed = ticks - lastFrameTicks;
@@ -114,7 +119,7 @@ void Update(GameState &state, float time) {
 }
 
 //Render all objects in the game, render UI elements
-void Render(GameState &state) {
+void Render() {
 	//Screen Color
 	//glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -131,13 +136,10 @@ void Clean() {
 
 int main(int argc, char *argv[])
 {
-	//Gamestate also holds global variables
-	GameState state;
-
 	Setup(state);
 
 	while (!state.done) {
-		Event(state);
+		Event();
 
 		//60 FPS updated time code
 		state.elapsed += state.accumulator;
@@ -146,12 +148,12 @@ int main(int argc, char *argv[])
 			continue;
 		}
 		while (state.elapsed >= FIXED_TIMESTEP) {
-			Update(state, FIXED_TIMESTEP);
+			Update(FIXED_TIMESTEP);
 			state.elapsed -= FIXED_TIMESTEP;
 		}
 		state.accumulator = state.elapsed;
 
-		Render(state);
+		Render();
 
 		SDL_GL_SwapWindow(state.displayWindow);
 	}
