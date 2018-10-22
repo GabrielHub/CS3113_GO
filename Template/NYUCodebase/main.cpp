@@ -120,17 +120,16 @@ void Update(float elapsed) {
 //Render all objects in the game, render UI elements
 void Render() {
 	//Screen Color
-	//glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//Draw Objects, example.draw(program)
-	state.player.Draw(state.program);
+	//state.player.Draw(state.program);
 }
 
 //Clean up memory
 void Clean() {
-	//glDisableVertexAttribArray(program.positionAttribute);
-	//glDisableVertexAttribArray(program.texCoordAttribute);
+	
 }
 
 int main(int argc, char *argv[])
@@ -138,25 +137,29 @@ int main(int argc, char *argv[])
 	Setup(state);
 
 	while (!state.done) {
-		Event();
+		Event(); //Check for input
 
+		//Game code
+		state.elapsed += state.accumulator;
+		if (state.elapsed < FIXED_TIMESTEP) {
+			state.accumulator = state.elapsed;
+			//continue;
+		}
 		//60 FPS updated time code
 		while (state.elapsed >= FIXED_TIMESTEP) {
 			Update(FIXED_TIMESTEP);
-			state.elapsed += state.accumulator;
-			if (state.elapsed < FIXED_TIMESTEP) {
-				state.accumulator = state.elapsed;
-				continue;
-			}
+			
 			state.elapsed -= FIXED_TIMESTEP;
 		}
 		state.accumulator = state.elapsed;
 
+		//Graphics
 		Render();
 
 		SDL_GL_SwapWindow(state.displayWindow);
 	}
 
+	//Clear memory
 	Clean();
 
 	SDL_Quit();

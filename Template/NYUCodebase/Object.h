@@ -15,7 +15,7 @@ public:
 
 	void const Draw(ShaderProgram &p);
 
-	//member var
+	//basic entity variables
 	float x;
 	float y;
 	float rotation;
@@ -25,5 +25,5 @@ public:
 	float velocity;
 	float dirX;
 	float dirY;
-	//Added member var
+	//game specific var
 };
