@@ -85,7 +85,6 @@ void Setup(GameState &state) {
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), textureID, width, height, velocity, direction x, direction y);
 	*/
-	state.player = Object(0, 0, 0, state.test, 1, 1, 1, 1, 1);
 }
 
 //Process inputs
@@ -142,13 +141,13 @@ int main(int argc, char *argv[])
 		Event();
 
 		//60 FPS updated time code
-		state.elapsed += state.accumulator;
-		if (state.elapsed < FIXED_TIMESTEP) {
-			state.accumulator = state.elapsed;
-			continue;
-		}
 		while (state.elapsed >= FIXED_TIMESTEP) {
 			Update(FIXED_TIMESTEP);
+			state.elapsed += state.accumulator;
+			if (state.elapsed < FIXED_TIMESTEP) {
+				state.accumulator = state.elapsed;
+				continue;
+			}
 			state.elapsed -= FIXED_TIMESTEP;
 		}
 		state.accumulator = state.elapsed;
