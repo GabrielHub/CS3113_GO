@@ -80,9 +80,9 @@ void Setup(GameState &state) {
 
 	//Load Textures
 	//Ex: example = LoadTexture(RESOURCE_FOLDER "example.example"); SheetSprite(unsigned int textureID, float u, float v, float width, float height, float size);
-	state.sheet = LoadTexture(RESOURCE_FOLDER "SC_spritesheet.png");
+	state.sheet = LoadTexture(RESOURCE_FOLDER "sprites.png");
 	state.font = LoadTexture(RESOURCE_FOLDER "font.png");
-	SheetSprite playerTexture = SheetSprite(state.sheet, 0.5f, 0.5f, 1280.0f, 720.0f, 0.5f);
+	SheetSprite playerTexture = SheetSprite(state.sheet, 0.0f, 110.0f, 28.0f, 14.0f, 0.5f);
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), spritesheet, width, height, velocity, direction x, direction y);
 	*/
@@ -118,7 +118,7 @@ void Update(float elapsed) {
 //Render all objects in the game, render UI elements
 void Render() {
 	//Screen Color
-	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+	//glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//Draw Objects, example.draw(program)

@@ -1,0 +1,6 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="SC_spritesheet_31.png" x="0" y="110" width="28" height="14"/>
+	<SubTexture name="SC_spritesheet_93.png" x="0" y="0" width="83" height="44"/>
+	<SubTexture name="SC_spritesheet_95.png" x="30" y="110" width="7" height="11"/>
+	<SubTexture name="SC_spritesheet_@v.png" x="0" y="46" width="59" height="62"/>
+</TextureAtlas>
