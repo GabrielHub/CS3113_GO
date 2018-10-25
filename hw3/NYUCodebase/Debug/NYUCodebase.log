@@ -1,3 +1,6 @@
-﻿  main.cpp
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(123): error C2039: 'setModelMatrix': is not a member of 'ShaderProgram'
-  z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\shaderprogram.h(13): note: see declaration of 'ShaderProgram'
+﻿  Game.cpp
+  main.cpp
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(68): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(168): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
+  NYUCodebase.vcxproj -> Z:\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw3\Debug\NYUCodebase.exe

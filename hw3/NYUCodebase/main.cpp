@@ -23,6 +23,7 @@
 #include "Game.h"
 #include "Object.h"
 #include "SheetSprite.h"
+#include <vector>
 
 //60FPS (1.0/60.0)
 #define FIXED_TIMESTEP 0.0166666f
@@ -56,6 +57,47 @@ GLuint LoadTexture(const char* filePath) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	stbi_image_free(image);
 	return retTexture;
+}
+
+void DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) {
+	float char_size = 1.0 / 16.0f;
+
+	std::vector<float> vertexData;
+	std::vector<float> texCoordData;
+
+	for (int i = 0; i < text.size(); i++) {
+		int spriteIndex = (int)text[i];
+
+		float texture_x = (float)(spriteIndex % 16) / 16.0f;
+		float texture_y = (float)(spriteIndex / 16) / 16.0f;
+
+		vertexData.insert(vertexData.end(), {
+			((size + spacing) * i) + (-0.5f * size), 0.5f * size,
+			((size + spacing) * i) + (-0.5f * size), -0.5f * size,
+			((size + spacing) * i) + (0.5f * size), 0.5f * size,
+			((size + spacing) * i) + (0.5f * size), -0.5f * size,
+			((size + spacing) * i) + (0.5f * size), 0.5f * size,
+			((size + spacing) * i) + (-0.5f * size), -0.5f * size,
+		});
+		texCoordData.insert(texCoordData.end(), {
+			texture_x, texture_y,
+			texture_x, texture_y + char_size,
+			texture_x + char_size, texture_y,
+			texture_x + char_size, texture_y + char_size,
+			texture_x + char_size, texture_y,
+			texture_x, texture_y + char_size,
+		});
+	}
+
+	glBindTexture(GL_TEXTURE_2D, fontTexture);
+
+	glUseProgram(program.programID);
+	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertexData.data());
+	glEnableVertexAttribArray(program.positionAttribute);
+
+	glUseProgram(program.programID);
+	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertexData.data());
+	glEnableVertexAttribArray(program.positionAttribute);
 }
 
 //Setup Function
@@ -122,6 +164,8 @@ void Render() {
 	//Draw Objects, example.draw(program)
 	state.program.SetModelMatrix(state.modelMatrix);
 	state.player.Draw(state.program);
+	//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
+	DrawText(state.program, state.font, "test", 0.3, 0);
 }
 
 //Clean up memory
