@@ -1,2 +1,3 @@
 ﻿  main.cpp
-  NYUCodebase.vcxproj -> C:\Users\GO\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw3\Debug\NYUCodebase.exe
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(123): error C2039: 'setModelMatrix': is not a member of 'ShaderProgram'
+  z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\shaderprogram.h(13): note: see declaration of 'ShaderProgram'

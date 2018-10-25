@@ -109,8 +109,7 @@ void Update(float elapsed) {
 	//Set matrices
 	state.program.SetProjectionMatrix(state.projectionMatrix);
 	state.program.SetViewMatrix(state.viewMatrix);
-	state.program.SetViewMatrix(state.modelMatrix);
-
+	state.program.SetModelMatrix(state.modelMatrix);
 	//Changes
 	/*
 		Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0); 
@@ -143,7 +142,7 @@ int main(int argc, char *argv[])
 		state.elapsed += state.accumulator;
 		if (state.elapsed < FIXED_TIMESTEP) {
 			state.accumulator = state.elapsed;
-			//continue;
+			continue;
 		}
 		//60 FPS updated time code
 		while (state.elapsed >= FIXED_TIMESTEP) {

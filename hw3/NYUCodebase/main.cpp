@@ -82,11 +82,11 @@ void Setup(GameState &state) {
 	//Ex: example = LoadTexture(RESOURCE_FOLDER "example.example"); SheetSprite(unsigned int textureID, float u, float v, float width, float height, float size);
 	state.sheet = LoadTexture(RESOURCE_FOLDER "sprites.png");
 	state.font = LoadTexture(RESOURCE_FOLDER "font.png");
-	SheetSprite playerTexture = SheetSprite(state.sheet, 0.0f, 110.0f, 28.0f, 14.0f, 0.5f);
+	SheetSprite playerTexture = SheetSprite(state.sheet, 0.0f, 110.0f / 128.0f, 28.0f / 128.0f, 14.0f / 128.0f, 0.2f);
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), spritesheet, width, height, velocity, direction x, direction y);
 	*/
-	state.player = Object(0, 0, 0, playerTexture, 1, 1, 1, 1, 1);
+	state.player = Object(0.0f, 0.0f, 0.0f, playerTexture, 25.0f, 25.0f, 1.0f, 1.0f, 1.0f);
 }
 
 //Process inputs
@@ -107,8 +107,6 @@ void Update(float elapsed) {
 	//Set matrices
 	state.program.SetProjectionMatrix(state.projectionMatrix);
 	state.program.SetViewMatrix(state.viewMatrix);
-	state.program.SetViewMatrix(state.modelMatrix);
-
 	//Changes
 	/*
 		Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0); 
@@ -118,10 +116,11 @@ void Update(float elapsed) {
 //Render all objects in the game, render UI elements
 void Render() {
 	//Screen Color
-	//glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//Draw Objects, example.draw(program)
+	state.program.SetModelMatrix(state.modelMatrix);
 	state.player.Draw(state.program);
 }
 
