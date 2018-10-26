@@ -37,6 +37,7 @@ enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
 //Gamestate also holds global variables
 GameState game;
 GameMode mode = STATE_MAIN_MENU;
+const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
 //Load Texture Function
 GLuint LoadTexture(const char* filePath) {
@@ -128,50 +129,53 @@ void Setup(GameState &game) {
 	game.sheet = LoadTexture(RESOURCE_FOLDER "sprites.png");
 	game.font = LoadTexture(RESOURCE_FOLDER "pixel_font.png");
 	SheetSprite playerTexture = SheetSprite(game.sheet, 0.0f, 46.0f / 128.0f, 59.0f / 128.0f, 62.0f / 128.0f, 0.2f);
+	SheetSprite bulletTexture = SheetSprite(game.sheet, 0.0f, 110.0f / 128.0f, 28.0f / 128.0f, 14.0f / 128.0f, 0.2f);
+	SheetSprite enemyTexture = SheetSprite(game.sheet, 0.0f, 0.0f, 83.0f / 128.0f, 44.0f / 128.0f, 0.2f);
 
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), spritesheet, width, height, velocity, direction x, direction y);
 	*/
 	//Create Player
-	game.player = Object(0.0f, 0.0f, 0.0f, playerTexture, 25.0f, 25.0f, 0.4f, 1.0f, 1.0f);
+	game.player = Object(0.0f, 0.0f, 0.0f, playerTexture, 25.0f, 25.0f, 0.2f, 1.0f, 1.0f);
 		//set initial player position
 	float angle = 90.0f * (3.1415926f / 180.0f);
 	game.playerMatrix = glm::rotate(game.playerMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 	game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(-0.8f, 0.0f, 0.0f));
 
+	//Create Bullet
+	game.bullet = Object(0.0f, 0.0f, 0.0f, bulletTexture, 0.0f, 0.0f, 0.2f, 1.0f, 1.0f);
+	game.bulletMatrix = glm::rotate(game.bulletMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+	//Create Enemies
+	for (int i = 0; i < 4; i++) {
+		game.enemies.push_back(Object(0.0f, 0.0f, 0.0f, enemyTexture, 0.0f, 0.0f, 1.0f, 1.0f, .0f));
+	}
+
 	//Time
-	float lastFrameTicks = 0.0f;
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
-	game.elapsed = ticks - lastFrameTicks;
-	lastFrameTicks = ticks;
+	game.elapsed = ticks;
 }
 
 //Process inputs
 void Event(float elapsed) {
-	switch (mode) {
-	case STATE_MAIN_MENU:
-		while (SDL_PollEvent(&game.event)) {
-			if (game.event.type == SDL_QUIT || game.event.type == SDL_WINDOWEVENT_CLOSE) {
-				game.done = true;
-			}
-			else if (game.event.type == SDL_KEYDOWN) {
-				mode = STATE_GAME_LEVEL;
-			}
-			//For single input
+	while (SDL_PollEvent(&game.event)) {
+		if (game.event.type == SDL_QUIT || game.event.type == SDL_WINDOWEVENT_CLOSE) {
+			game.done = true;
 		}
-		break;
-	case STATE_GAME_LEVEL:
-		//For polling input
-		const Uint8 *keys = SDL_GetKeyboardState(NULL);
-		if (keys[SDL_SCANCODE_A]) {
-			game.player.x -= game.player.velocity * elapsed;
-			game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, game.player.velocity * elapsed, 0.0f));
+		else if (game.event.type == SDL_KEYDOWN) {
+			mode = STATE_GAME_LEVEL;
 		}
-		else if (keys[SDL_SCANCODE_D]) {
-			game.player.x += game.player.velocity * elapsed;
-			game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, -game.player.velocity * elapsed, 0.0f));
-		}
-		break;
+		//For single input
+	}
+
+	//For polling input
+	if (keys[SDL_SCANCODE_A]) {
+		game.player.x -= game.player.velocity * elapsed;
+		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, game.player.velocity * elapsed, 0.0f));
+	}
+	else if (keys[SDL_SCANCODE_D]) {
+		game.player.x += game.player.velocity * elapsed;
+		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, -game.player.velocity * elapsed, 0.0f));
 	}
 }
 
@@ -183,7 +187,7 @@ void Update(float elapsed) {
 	switch (mode) {
 	case STATE_MAIN_MENU:
 
-	break;
+		break;
 	case STATE_GAME_LEVEL:
 		
 		break;
@@ -216,7 +220,6 @@ void Render() {
 		game.player.Draw(game.program);
 	break;
 	}
-	
 }
 
 //Clean up memory

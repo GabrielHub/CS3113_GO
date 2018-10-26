@@ -32,6 +32,7 @@ public:
 
 	glm::mat4 textMatrix; //Model Matrices
 	glm::mat4 playerMatrix;
+	glm::mat4 bulletMatrix;
 
 	//Textures
 	GLuint sheet;
@@ -40,5 +41,5 @@ public:
 	Object player;
 	Object bullet;
 	//Object Pools
-	Object enemies[12];
+	std::vector<Object> enemies;
 };
