@@ -2,7 +2,7 @@
 
 Object::Object() {}
 
-Object::Object(float x, float y, float rotation, SheetSprite sprite, float width, float height, float velocity, float dirX, float dirY) : x(x), y(y), rotation(rotation), sprite(sprite), width(width), height(height), velocity(velocity), dirX(dirX), dirY(dirY) {}
+Object::Object(float x, float y, float rotation, SheetSprite sprite, float width, float height, float velocity, float dirX, float dirY) : x(x), y(y), rotation(rotation), sprite(sprite), width(width), height(height), velocity(velocity), dirX(dirX), dirY(dirY), alive(true) {}
 
 void const Object::Draw(ShaderProgram &p) {
 	/*float vertices[] = {

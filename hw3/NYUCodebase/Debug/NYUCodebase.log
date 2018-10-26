@@ -1,3 +1,11 @@
 ﻿  main.cpp
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(69): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(85): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(155): warning C4305: 'argument': truncation from 'double' to 'float'
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(163): warning C4305: 'argument': truncation from 'double' to 'float'
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(168): warning C4305: 'argument': truncation from 'double' to 'float'
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(237): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(241): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(243): warning C4305: '-=': truncation from 'double' to 'float'
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(250): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw3\nyucodebase\main.cpp(296): warning C4018: '<': signed/unsigned mismatch
   NYUCodebase.vcxproj -> Z:\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw3\Debug\NYUCodebase.exe

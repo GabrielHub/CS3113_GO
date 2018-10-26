@@ -24,6 +24,7 @@
 #include "Object.h"
 #include "SheetSprite.h"
 #include <vector>
+#include <cmath>
 
 //60FPS (1.0/60.0)
 #define FIXED_TIMESTEP 0.0166666f
@@ -38,6 +39,21 @@ enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
 GameState game;
 GameMode mode = STATE_MAIN_MENU;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
+
+bool detectCollision(Object one, Object two) {
+	/*if (abs(one.x - two.x) - (one.width + two.width / 2) <= 0) {
+		if (abs(one.y - two.y) - (one.height + two.height / 2) <= 0) {
+			return true;
+		}
+	}
+	return false;*/
+	if (one.x >= two.x - two.width / 2 && one.x <= two.x + two.width / 2) {
+		if (one.y >= two.y - two.height / 2 && one.y <= two.y + two.height / 2) {
+			return true;
+		}
+	}
+	return false;
+}
 
 //Load Texture Function
 GLuint LoadTexture(const char* filePath) {
@@ -136,7 +152,7 @@ void Setup(GameState &game) {
 		Object example(xposition, yposition, rotation (angle), spritesheet, width, height, velocity, direction x, direction y);
 	*/
 	//Create Player
-	game.player = Object(0.0f, 0.0f, 0.0f, playerTexture, 25.0f, 25.0f, 0.2f, 1.0f, 1.0f);
+	game.player = Object(0.0f, 0.0f, 0.0f, playerTexture, (59.0f / 128.0f) * 0.2, (62.0f / 128.0f) * 0.2, 0.2f, 1.0f, 0.2f);
 		//set initial player position
 	float angle = 90.0f * (3.1415926f / 180.0f);
 	game.playerMatrix = glm::rotate(game.playerMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -144,12 +160,12 @@ void Setup(GameState &game) {
 
 	//Create Bullet
 	game.fire = false;
-	game.bullet = Object(0.0f, 0.0f, 0.0f, bulletTexture, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	game.bullet = Object(0.0f, 0.0f, 0.0f, bulletTexture, (28.0f / 128.0f) * 0.02, (14.0f / 128.0f) * 0.02, 1.0f, 1.0f, 0.2f);
 	game.bulletMatrix = glm::rotate(game.bulletMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//Create Enemies
 	for (int i = 0; i < 4; i++) {
-		game.enemies.push_back(Object(0.0f, 0.0f, 0.0f, enemyTexture, 0.0f, 0.0f, 1.0f, 1.0f, .0f));
+		game.enemies.push_back(Object(i / 2.2f, 0.0f, 0.0f, enemyTexture, (83.0f / 128.0f) * 0.2, (44.0f / 128.0f) * 0.2, 0.3f, 1.0f, 0.2f));
 	}
 
 	//Time
@@ -164,7 +180,7 @@ void Event(float elapsed) {
 		if (game.event.type == SDL_QUIT || game.event.type == SDL_WINDOWEVENT_CLOSE) {
 			game.done = true;
 		}
-		else if (game.event.type == SDL_KEYDOWN ) {
+		else if (game.event.type == SDL_KEYDOWN) {
 			if (mode == STATE_MAIN_MENU) {
 				mode = STATE_GAME_LEVEL;
 			}
@@ -181,6 +197,7 @@ void Event(float elapsed) {
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, game.player.velocity * elapsed, 0.0f));
 		if (game.fire == false) { //if bullet hasn't been fired, move it with the player
 			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(0.0f, game.bullet.velocity * elapsed, 0.0f));
+			game.bullet.x -= game.bullet.velocity * elapsed;
 		}
 	}
 	else if (keys[SDL_SCANCODE_D]) {
@@ -188,6 +205,7 @@ void Event(float elapsed) {
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, -game.player.velocity * elapsed, 0.0f));
 		if (game.fire == false) {
 			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(0.0f, game.bullet.velocity * elapsed, 0.0f));
+			game.bullet.x += game.bullet.velocity * elapsed;
 		}
 	}
 }
@@ -216,7 +234,27 @@ void Update(float elapsed) {
 		}
 
 		//Enemies
-		
+		for (int i = 0; i < game.enemies.size(); i++) {
+			game.enemies[i].x += game.enemies[i].dirX * game.enemies[i].velocity * elapsed;
+		}
+		if (game.enemies[0].x <= -1.6 || game.enemies[game.enemies.size() - 1].x >= 1.6) {
+			for (int i = 0; i < game.enemies.size(); i++) {
+				game.enemies[i].dirX *= -1.0;
+				game.enemies[i].y -= 0.1;
+			}
+		}
+
+		//Check collisions
+			//Bullet - Enemy Collision
+		if (game.fire) {
+			for (int i = 0; i < game.enemies.size(); i++) {
+				if (detectCollision(game.enemies[i], game.bullet)) {
+					game.fire = false; //destroy bullet
+					game.enemies[i].alive = false; //kill enemy
+				}
+			}
+		}
+	
 		break;
 	}
 }
@@ -254,7 +292,15 @@ void Render() {
 		}
 
 		//enemies
-		game.program.SetModelMatrix(game.enemyMatrix);
+		
+		for (int i = 0; i < game.enemies.size(); i++) {
+			game.enemyMatrix = glm::mat4(1.0f);
+			game.enemyMatrix = glm::translate(game.enemyMatrix, glm::vec3(game.enemies[i].x, game.enemies[i].y, 0.0f));
+			game.program.SetModelMatrix(game.enemyMatrix);
+			if (game.enemies[i].alive) {
+				game.enemies[i].Draw(game.program);
+			}
+		}
 	break;
 	}
 }

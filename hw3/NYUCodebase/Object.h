@@ -26,4 +26,5 @@ public:
 	float dirX;
 	float dirY;
 	//Added member var
+	bool alive;
 };
