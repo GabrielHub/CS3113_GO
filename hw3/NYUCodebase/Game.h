@@ -7,6 +7,7 @@
 #include <SDL_image.h>
 #include "ShaderProgram.h"
 
+#include <vector>
 #include "Object.h"
 
 //GameState
@@ -20,19 +21,24 @@ public:
 	ShaderProgram program;
 	//Time
 	float elapsed;
-	float accumulator = 0.0f;
+	float accumulator;
 	//Event var
 	SDL_Event event;
 	//Loop var
-	bool done = false;
+	bool done;
 	//Matrices
-	glm::mat4 projectionMatrix = glm::mat4(1.0f);
-	glm::mat4 viewMatrix = glm::mat4(1.0f);
-	glm::mat4 modelMatrix = glm::mat4(1.0f); //Model Matrices
+	glm::mat4 projectionMatrix;
+	glm::mat4 viewMatrix;
+
+	glm::mat4 textMatrix; //Model Matrices
+	glm::mat4 playerMatrix;
 
 	//Textures
 	GLuint sheet;
 	GLuint font;
 
 	Object player;
+	Object bullet;
+	//Object Pools
+	Object enemies[12];
 };

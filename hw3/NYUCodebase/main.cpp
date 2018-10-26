@@ -35,8 +35,8 @@
 
 enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
 //Gamestate also holds global variables
-GameState state;
-GameMode mode;
+GameState game;
+GameMode mode = STATE_MAIN_MENU;
 
 //Load Texture Function
 GLuint LoadTexture(const char* filePath) {
@@ -91,21 +91,24 @@ void DrawText(ShaderProgram &program, int fontTexture, std::string text, float s
 
 	glBindTexture(GL_TEXTURE_2D, fontTexture);
 
-	glUseProgram(program.programID);
+	//glUseProgram(program.programID);
 	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertexData.data());
 	glEnableVertexAttribArray(program.positionAttribute);
 
-	glUseProgram(program.programID);
-	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertexData.data());
-	glEnableVertexAttribArray(program.positionAttribute);
+	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoordData.data());
+	glEnableVertexAttribArray(program.texCoordAttribute);
+	glDrawArrays(GL_TRIANGLES, 0, 6*text.size());
+
+	glDisableVertexAttribArray(program.positionAttribute);
+	glDisableVertexAttribArray(program.texCoordAttribute);
 }
 
 //Setup Function
-void Setup(GameState &state) {
+void Setup(GameState &game) {
 	SDL_Init(SDL_INIT_VIDEO);
-	state.displayWindow = SDL_CreateWindow("GO", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
-	SDL_GLContext context = SDL_GL_CreateContext(state.displayWindow);
-	SDL_GL_MakeCurrent(state.displayWindow, context);
+	game.displayWindow = SDL_CreateWindow("GO", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+	SDL_GLContext context = SDL_GL_CreateContext(game.displayWindow);
+	SDL_GL_MakeCurrent(game.displayWindow, context);
 
 #ifdef _WINDOWS
 	glewInit();
@@ -113,89 +116,136 @@ void Setup(GameState &state) {
 
 	//Viewport and program setup
 	glViewport(0, 0, 1280, 720);
-	state.program.Load(RESOURCE_FOLDER "vertex_textured.glsl", RESOURCE_FOLDER "fragment_textured.glsl");
-	glUseProgram(state.program.programID);
-	state.projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
+	game.program.Load(RESOURCE_FOLDER "vertex_textured.glsl", RESOURCE_FOLDER "fragment_textured.glsl");
+	glUseProgram(game.program.programID);
+	game.projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
 	//For Alpha Blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Load Textures
 	//Ex: example = LoadTexture(RESOURCE_FOLDER "example.example"); SheetSprite(unsigned int textureID, float u, float v, float width, float height, float size);
-	state.sheet = LoadTexture(RESOURCE_FOLDER "sprites.png");
-	state.font = LoadTexture(RESOURCE_FOLDER "font.png");
-	SheetSprite playerTexture = SheetSprite(state.sheet, 0.0f, 110.0f / 128.0f, 28.0f / 128.0f, 14.0f / 128.0f, 0.2f);
+	game.sheet = LoadTexture(RESOURCE_FOLDER "sprites.png");
+	game.font = LoadTexture(RESOURCE_FOLDER "pixel_font.png");
+	SheetSprite playerTexture = SheetSprite(game.sheet, 0.0f, 46.0f / 128.0f, 59.0f / 128.0f, 62.0f / 128.0f, 0.2f);
+
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), spritesheet, width, height, velocity, direction x, direction y);
 	*/
-	state.player = Object(0.0f, 0.0f, 0.0f, playerTexture, 25.0f, 25.0f, 1.0f, 1.0f, 1.0f);
+	//Create Player
+	game.player = Object(0.0f, 0.0f, 0.0f, playerTexture, 25.0f, 25.0f, 0.4f, 1.0f, 1.0f);
+		//set initial player position
+	float angle = 90.0f * (3.1415926f / 180.0f);
+	game.playerMatrix = glm::rotate(game.playerMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+	game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(-0.8f, 0.0f, 0.0f));
+
+	//Time
+	float lastFrameTicks = 0.0f;
+	float ticks = (float)SDL_GetTicks() / 1000.0f;
+	game.elapsed = ticks - lastFrameTicks;
+	lastFrameTicks = ticks;
 }
 
 //Process inputs
-void Event() {
-	while (SDL_PollEvent(&state.event)) {
-		if (state.event.type == SDL_QUIT || state.event.type == SDL_WINDOWEVENT_CLOSE) {
-			state.done = true;
+void Event(float elapsed) {
+	switch (mode) {
+	case STATE_MAIN_MENU:
+		while (SDL_PollEvent(&game.event)) {
+			if (game.event.type == SDL_QUIT || game.event.type == SDL_WINDOWEVENT_CLOSE) {
+				game.done = true;
+			}
+			else if (game.event.type == SDL_KEYDOWN) {
+				mode = STATE_GAME_LEVEL;
+			}
+			//For single input
 		}
-		//For single input
+		break;
+	case STATE_GAME_LEVEL:
+		//For polling input
+		const Uint8 *keys = SDL_GetKeyboardState(NULL);
+		if (keys[SDL_SCANCODE_A]) {
+			game.player.x -= game.player.velocity * elapsed;
+			game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, game.player.velocity * elapsed, 0.0f));
+		}
+		else if (keys[SDL_SCANCODE_D]) {
+			game.player.x += game.player.velocity * elapsed;
+			game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, -game.player.velocity * elapsed, 0.0f));
+		}
+		break;
 	}
-
-	//For polling input
-	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 }
 
 //Updating, Move all objects based on time and velocity
 void Update(float elapsed) {
-	//Set matrices
-	state.program.SetProjectionMatrix(state.projectionMatrix);
-	state.program.SetViewMatrix(state.viewMatrix);
-	//Changes
 	/*
 		Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0); 
 	*/
+	switch (mode) {
+	case STATE_MAIN_MENU:
+
+	break;
+	case STATE_GAME_LEVEL:
+		
+		break;
+	}
 }
 
 //Render all objects in the game, render UI elements
 void Render() {
-	//Screen Color
-	glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	switch (mode) {
+	case STATE_MAIN_MENU:
+		//Set Matrices
+		game.program.SetProjectionMatrix(game.projectionMatrix);
+		game.program.SetViewMatrix(game.viewMatrix);
 
-	//Draw Objects, example.draw(program)
-	state.program.SetModelMatrix(state.modelMatrix);
-	state.player.Draw(state.program);
-	//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
-	DrawText(state.program, state.font, "test", 0.3, 0);
+		game.program.SetModelMatrix(game.textMatrix);
+		//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
+		DrawText(game.program, game.font, "Press Any Key To Continue", 0.05f, 0.0f);
+	break;
+	case STATE_GAME_LEVEL:
+		//Set matrices
+		game.program.SetProjectionMatrix(game.projectionMatrix);
+		game.program.SetViewMatrix(game.viewMatrix);
+
+		//Screen Color
+		glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//Draw Objects, example.draw(program)
+		game.program.SetModelMatrix(game.playerMatrix);
+		game.player.Draw(game.program);
+	break;
+	}
+	
 }
 
 //Clean up memory
 void Clean() {
-	//glDisableVertexAttribArray(program.positionAttribute);
-	//glDisableVertexAttribArray(program.texCoordAttribute);
+	
 }
 
 int main(int argc, char *argv[])
 {
-	Setup(state);
+	Setup(game);
 
-	while (!state.done) {
-		Event();
+	while (!game.done) {
+		Event(FIXED_TIMESTEP);
 
-		state.elapsed += state.accumulator;
-		if (state.elapsed < FIXED_TIMESTEP) {
-			state.accumulator = state.elapsed;
-			//continue;
+		game.elapsed += game.accumulator;
+		if (game.elapsed < FIXED_TIMESTEP) {
+			game.accumulator = game.elapsed;
+			continue;
 		}
 		//60 FPS updated time code
-		while (state.elapsed >= FIXED_TIMESTEP) {
+		while (game.elapsed >= FIXED_TIMESTEP) {
 			Update(FIXED_TIMESTEP);
-			state.elapsed -= FIXED_TIMESTEP;
+			game.elapsed -= FIXED_TIMESTEP;
 		}
-		state.accumulator = state.elapsed;
+		game.accumulator = game.elapsed;
 
 		Render();
 
-		SDL_GL_SwapWindow(state.displayWindow);
+		SDL_GL_SwapWindow(game.displayWindow);
 	}
 
 	Clean();
