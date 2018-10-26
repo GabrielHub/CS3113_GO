@@ -179,14 +179,14 @@ void Event(float elapsed) {
 	if (keys[SDL_SCANCODE_A]) {
 		game.player.x -= game.player.velocity * elapsed;
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, game.player.velocity * elapsed, 0.0f));
-		if (!game.fire) { //if bullet hasn't been fired, move it with the player
+		if (game.fire == false) { //if bullet hasn't been fired, move it with the player
 			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(0.0f, game.bullet.velocity * elapsed, 0.0f));
 		}
 	}
 	else if (keys[SDL_SCANCODE_D]) {
 		game.player.x += game.player.velocity * elapsed;
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, -game.player.velocity * elapsed, 0.0f));
-		if (!game.fire) {
+		if (game.fire == false) {
 			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(0.0f, game.bullet.velocity * elapsed, 0.0f));
 		}
 	}
@@ -201,14 +201,21 @@ void Update(float elapsed) {
 	case STATE_GAME_LEVEL:
 		//Bullet
 		if (game.fire) {
+			game.bullet.y += game.bullet.velocity * elapsed;
 			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(game.bullet.velocity * elapsed, 0.0f, 0.0f));
+			//Check for bullet border collision
+			if (game.bullet.y + game.bullet.height >= 2.0f) {
+				game.fire = false;
+			}
 		}
-		/*if (!game.fire) {
+		else {
 			//when bullet expires, move to player
 			game.bullet.x = game.player.x;
 			game.bullet.y = game.player.y;
-			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(-1.0f, 0.0f, 0.0f));
-		}*/
+			game.bulletMatrix = game.playerMatrix;
+		}
+
+		//Enemies
 		
 		break;
 	}
@@ -236,12 +243,18 @@ void Render() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Draw Objects, example.draw(program)
+		//Player
 		game.program.SetModelMatrix(game.playerMatrix);
 		game.player.Draw(game.program);
-			//draw bullet only if it has been fired
+
+		//draw bullet only if it has been fired
+		game.program.SetModelMatrix(game.bulletMatrix);
 		if (game.fire) {
 			game.bullet.Draw(game.program);
 		}
+
+		//enemies
+		game.program.SetModelMatrix(game.enemyMatrix);
 	break;
 	}
 }

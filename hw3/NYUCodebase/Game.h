@@ -34,6 +34,7 @@ public:
 	glm::mat4 textMatrix; //Model Matrices
 	glm::mat4 playerMatrix;
 	glm::mat4 bulletMatrix;
+	glm::mat4 enemyMatrix;
 
 	//Textures
 	GLuint sheet;
