@@ -129,7 +129,7 @@ void Setup(GameState &game) {
 	game.sheet = LoadTexture(RESOURCE_FOLDER "sprites.png");
 	game.font = LoadTexture(RESOURCE_FOLDER "pixel_font.png");
 	SheetSprite playerTexture = SheetSprite(game.sheet, 0.0f, 46.0f / 128.0f, 59.0f / 128.0f, 62.0f / 128.0f, 0.2f);
-	SheetSprite bulletTexture = SheetSprite(game.sheet, 0.0f, 110.0f / 128.0f, 28.0f / 128.0f, 14.0f / 128.0f, 0.2f);
+	SheetSprite bulletTexture = SheetSprite(game.sheet, 0.0f, 110.0f / 128.0f, 28.0f / 128.0f, 14.0f / 128.0f, 0.02f);
 	SheetSprite enemyTexture = SheetSprite(game.sheet, 0.0f, 0.0f, 83.0f / 128.0f, 44.0f / 128.0f, 0.2f);
 
 	/* Create Objects, example:
@@ -143,7 +143,8 @@ void Setup(GameState &game) {
 	game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(-0.8f, 0.0f, 0.0f));
 
 	//Create Bullet
-	game.bullet = Object(0.0f, 0.0f, 0.0f, bulletTexture, 0.0f, 0.0f, 0.2f, 1.0f, 1.0f);
+	game.fire = false;
+	game.bullet = Object(0.0f, 0.0f, 0.0f, bulletTexture, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	game.bulletMatrix = glm::rotate(game.bulletMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//Create Enemies
@@ -153,7 +154,8 @@ void Setup(GameState &game) {
 
 	//Time
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
-	game.elapsed = ticks;
+	game.elapsed = ticks - game.lastFrameTicks;
+	game.lastFrameTicks = game.elapsed;
 }
 
 //Process inputs
@@ -162,8 +164,13 @@ void Event(float elapsed) {
 		if (game.event.type == SDL_QUIT || game.event.type == SDL_WINDOWEVENT_CLOSE) {
 			game.done = true;
 		}
-		else if (game.event.type == SDL_KEYDOWN) {
-			mode = STATE_GAME_LEVEL;
+		else if (game.event.type == SDL_KEYDOWN ) {
+			if (mode == STATE_MAIN_MENU) {
+				mode = STATE_GAME_LEVEL;
+			}
+			else if (game.event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+				game.fire = true;
+			}
 		}
 		//For single input
 	}
@@ -172,10 +179,16 @@ void Event(float elapsed) {
 	if (keys[SDL_SCANCODE_A]) {
 		game.player.x -= game.player.velocity * elapsed;
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, game.player.velocity * elapsed, 0.0f));
+		if (!game.fire) { //if bullet hasn't been fired, move it with the player
+			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(0.0f, game.bullet.velocity * elapsed, 0.0f));
+		}
 	}
 	else if (keys[SDL_SCANCODE_D]) {
 		game.player.x += game.player.velocity * elapsed;
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(0.0f, -game.player.velocity * elapsed, 0.0f));
+		if (!game.fire) {
+			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(0.0f, game.bullet.velocity * elapsed, 0.0f));
+		}
 	}
 }
 
@@ -185,10 +198,17 @@ void Update(float elapsed) {
 		Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0); 
 	*/
 	switch (mode) {
-	case STATE_MAIN_MENU:
-
-		break;
 	case STATE_GAME_LEVEL:
+		//Bullet
+		if (game.fire) {
+			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(game.bullet.velocity * elapsed, 0.0f, 0.0f));
+		}
+		/*if (!game.fire) {
+			//when bullet expires, move to player
+			game.bullet.x = game.player.x;
+			game.bullet.y = game.player.y;
+			game.bulletMatrix = glm::translate(game.bulletMatrix, glm::vec3(-1.0f, 0.0f, 0.0f));
+		}*/
 		
 		break;
 	}
@@ -218,6 +238,10 @@ void Render() {
 		//Draw Objects, example.draw(program)
 		game.program.SetModelMatrix(game.playerMatrix);
 		game.player.Draw(game.program);
+			//draw bullet only if it has been fired
+		if (game.fire) {
+			game.bullet.Draw(game.program);
+		}
 	break;
 	}
 }

@@ -22,6 +22,7 @@ public:
 	//Time
 	float elapsed;
 	float accumulator;
+	float lastFrameTicks;
 	//Event var
 	SDL_Event event;
 	//Loop var
@@ -42,4 +43,6 @@ public:
 	Object bullet;
 	//Object Pools
 	std::vector<Object> enemies;
+
+	bool fire;
 };
