@@ -48,6 +48,7 @@ bool detectCollision(Object one, Object two) {
 	}
 	return false;*/
 	if (one.x >= two.x - two.width / 2 && one.x <= two.x + two.width / 2) {
+		return true;
 		if (one.y >= two.y - two.height / 2 && one.y <= two.y + two.height / 2) {
 			return true;
 		}
@@ -157,6 +158,7 @@ void Setup(GameState &game) {
 	float angle = 90.0f * (3.1415926f / 180.0f);
 	game.playerMatrix = glm::rotate(game.playerMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 	game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(-0.8f, 0.0f, 0.0f));
+	game.player.alive = true;
 
 	//Create Bullet
 	game.fire = false;
@@ -217,6 +219,8 @@ void Update(float elapsed) {
 	*/
 	switch (mode) {
 	case STATE_GAME_LEVEL:
+		game.enemies_alive = game.enemies.size();
+		
 		//Bullet
 		if (game.fire) {
 			game.bullet.y += game.bullet.velocity * elapsed;
@@ -251,6 +255,17 @@ void Update(float elapsed) {
 				if (detectCollision(game.enemies[i], game.bullet)) {
 					game.fire = false; //destroy bullet
 					game.enemies[i].alive = false; //kill enemy
+				}
+			}
+		}
+			//Check enemy player collision
+		for (int i = 0; i < game.enemies.size(); i++) {
+			if (game.enemies[i].alive) {
+				/*if (detectCollision(game.player, game.enemies[i])) {
+					//game.player.alive = false;
+				}*/
+				if (game.enemies[i].y <= -0.6f) {
+					game.player.alive = false;
 				}
 			}
 		}
@@ -300,8 +315,34 @@ void Render() {
 			if (game.enemies[i].alive) {
 				game.enemies[i].Draw(game.program);
 			}
+			else {
+				game.enemies_alive -= 1;
+			}
+		}
+
+		//Check if game is over or not
+		if (!game.player.alive || game.enemies_alive <= 0) {
+			mode = STATE_GAME_OVER;
 		}
 	break;
+	case STATE_GAME_OVER:
+		//Set Matrices
+		game.program.SetProjectionMatrix(game.projectionMatrix);
+		game.program.SetViewMatrix(game.viewMatrix);
+
+		game.program.SetModelMatrix(game.textMatrix);
+		//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
+
+		if (game.enemies_alive <= 0) {
+			DrawText(game.program, game.font, "GAME OVER, YOU WIN!", 0.05f, 0.0f);
+		}
+		else if (!game.player.alive) {
+			DrawText(game.program, game.font, "GAME OVER, YOU LOSE", 0.05f, 0.0f);
+		}
+		else {
+			DrawText(game.program, game.font, "UH OH THERES A BUG", 0.05f, 0.0f);
+		}
+		break;
 	}
 }
 

@@ -46,4 +46,5 @@ public:
 	std::vector<Object> enemies;
 
 	bool fire;
+	int enemies_alive;
 };
