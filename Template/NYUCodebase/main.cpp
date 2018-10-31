@@ -23,6 +23,8 @@
 #include "Game.h"
 #include "Object.h"
 #include "SheetSprite.h"
+#include <vector>
+#include <cmath>
 
 //60FPS (1.0/60.0)
 #define FIXED_TIMESTEP 0.0166666f
@@ -35,7 +37,19 @@
 enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
 //Gamestate also holds global variables
 GameState state;
-GameMode mode;
+GameMode mode = STATE_MAIN_MENU;
+const Uint8 *keys = SDL_GetKeyboardState(NULL);
+
+//Collision detection for 2 objects
+bool detectCollision(Object one, Object two) {
+	if (one.x >= two.x - two.width / 2 && one.x <= two.x + two.width / 2) {
+		return true;
+		if (one.y >= two.y - two.height / 2 && one.y <= two.y + two.height / 2) {
+			return true;
+		}
+	}
+	return false;
+}
 
 //Load Texture Function
 GLuint LoadTexture(const char* filePath) {
@@ -56,6 +70,51 @@ GLuint LoadTexture(const char* filePath) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	stbi_image_free(image);
 	return retTexture;
+}
+
+//Function to convert strings to text using spritesheets
+void DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) {
+	float char_size = 1.0 / 16.0f;
+
+	std::vector<float> vertexData;
+	std::vector<float> texCoordData;
+
+	for (int i = 0; i < text.size(); i++) {
+		int spriteIndex = (int)text[i];
+
+		float texture_x = (float)(spriteIndex % 16) / 16.0f;
+		float texture_y = (float)(spriteIndex / 16) / 16.0f;
+
+		vertexData.insert(vertexData.end(), {
+			((size + spacing) * i) + (-0.5f * size), 0.5f * size,
+			((size + spacing) * i) + (-0.5f * size), -0.5f * size,
+			((size + spacing) * i) + (0.5f * size), 0.5f * size,
+			((size + spacing) * i) + (0.5f * size), -0.5f * size,
+			((size + spacing) * i) + (0.5f * size), 0.5f * size,
+			((size + spacing) * i) + (-0.5f * size), -0.5f * size,
+			});
+		texCoordData.insert(texCoordData.end(), {
+			texture_x, texture_y,
+			texture_x, texture_y + char_size,
+			texture_x + char_size, texture_y,
+			texture_x + char_size, texture_y + char_size,
+			texture_x + char_size, texture_y,
+			texture_x, texture_y + char_size,
+			});
+	}
+
+	glBindTexture(GL_TEXTURE_2D, fontTexture);
+
+	//glUseProgram(program.programID);
+	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertexData.data());
+	glEnableVertexAttribArray(program.positionAttribute);
+
+	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoordData.data());
+	glEnableVertexAttribArray(program.texCoordAttribute);
+	glDrawArrays(GL_TRIANGLES, 0, 6 * text.size());
+
+	glDisableVertexAttribArray(program.positionAttribute);
+	glDisableVertexAttribArray(program.texCoordAttribute);
 }
 
 //Setup Function
@@ -93,11 +152,13 @@ void Event() {
 		if (state.event.type == SDL_QUIT || state.event.type == SDL_WINDOWEVENT_CLOSE) {
 			state.done = true;
 		}
-		//For single input
+		/*For single input, Exmaple:
+		else if (game.event.type == SDL_KEYDOWN)
+		*/
 	}
 
-	//For polling input
-	const Uint8 *keys = SDL_GetKeyboardState(NULL);
+	//For polling input, ex. if (keys[SDL_SCANCODE_A])
+	
 }
 
 //Updating, Move all objects based on time and velocity
