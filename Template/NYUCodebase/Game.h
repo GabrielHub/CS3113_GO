@@ -20,18 +20,20 @@ public:
 	ShaderProgram program;
 	//Time
 	float elapsed;
-	float accumulator = 0.0f;
+	float accumulator;
+	float lastFrameTicks;
 	//Event var
 	SDL_Event event;
 	//Loop var
-	bool done = false;
+	bool done;
 	//Matrices
-	glm::mat4 projectionMatrix = glm::mat4(1.0f);
-	glm::mat4 viewMatrix = glm::mat4(1.0f);
-	glm::mat4 modelMatrix = glm::mat4(1.0f); //Model Matrices
+	glm::mat4 projectionMatrix;
+	glm::mat4 viewMatrix;
+	glm::mat4 modelMatrix; //Model Matrices
 
 	//Textures
 	GLuint test;
 
+	//Objects
 	Object player;
 };

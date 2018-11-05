@@ -11,19 +11,16 @@
 class Object {
 public:
 	Object();
-	Object(float x, float y, float rotation, SheetSprite sprite, float width, float height, float velocity, float dirX, float dirY);
+	Object(glm::vec3 position, glm::vec3 direction, float rotation, SheetSprite sprite, float width, float height, float velocity);
 
-	void const Draw(ShaderProgram &p);
-
-	//basic entity variables
-	float x;
-	float y;
+	//template entity variables
+	glm::vec3 position; // position[1] = x, position[2] = y, position[3] = z *keep zero
+	glm::vec3 direction; // direction[1] = x direction...
 	float rotation;
 	SheetSprite sprite;
 	float width;
 	float height;
 	float velocity;
-	float dirX;
-	float dirY;
-	//game specific var
+
+	//game specific variables
 };
