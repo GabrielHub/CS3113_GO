@@ -113,6 +113,11 @@ GLuint LoadTexture(const char* filePath) {
 	return retTexture;
 }
 
+//Linear Interpolation
+float lerp(float v0, float v1, float t) {
+	return (1.0 - t) * v0 + t * v1;
+}
+
 //Setup Function
 void Setup(GameState &game) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -172,6 +177,9 @@ void Update(float elapsed) {
 		//Changes
 		/*
 			Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0);
+			friction: velocity = lerp(velocity, 0.0f, elapsed * friction_x);
+			acceleration: velocity_x += acceleration * elapsed;
+			velocity: position_x += velocity_x * elpased;
 		*/
 
 		break;
