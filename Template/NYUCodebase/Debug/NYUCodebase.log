@@ -1,3 +1,9 @@
-﻿  main.cpp
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\template\nyucodebase\main.cpp(57): warning C4018: '<': signed/unsigned mismatch
-  NYUCodebase.vcxproj -> Z:\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\Template\Debug\NYUCodebase.exe
+﻿  Game.cpp
+  Object.cpp
+  ShaderProgram.cpp
+  SheetSprite.cpp
+  main.cpp
+c:\users\go\onedrive - nyu.edu\cs\gameprog\cs3113_go\template\nyucodebase\main.cpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\go\onedrive - nyu.edu\cs\gameprog\cs3113_go\template\nyucodebase\main.cpp(118): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  NYUCodebase.vcxproj -> C:\Users\GO\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\Template\Debug\NYUCodebase.exe

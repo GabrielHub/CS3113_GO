@@ -7,5 +7,51 @@ Object::Object(glm::vec3 position, glm::vec3 direction, SheetSprite sprite, floa
 
 //Collision
 bool Object::EntityCollision(Object &object) {
+	//Check top
+	if ((position.x + sprite.size / 2) <= (object.position.y + object.sprite.size / 2)) {
+		/*position.y += 0.5f;
+		object.position.y -= 0.5f;*/
+		return true;
+	}
+	else {
+		return false;
+	}
+
+	//check bottom
+	if ((position.y + sprite.size / 2) >= (object.position.y - object.sprite.size / 2)) {
+		/*
+		position.y -= 0.5f;
+		object.position.y += 0.5f;
+		*/
+		return true;
+	}
+	else {
+		return false;
+	}
+
+	//check right
+	if ((position.x + sprite.size / 2) <= (object.position.x - object.sprite.size / 2)) {
+		/*
+		position.x -= 0.5f;
+		object.position.x += 0.5f;
+		*/
+		return true;
+	}
+	else {
+		return false;
+	}
+
+	//check left
+	if ((position.x - sprite.size / 2) >= (object.position.x + object.sprite.size / 2)) {
+		/*
+		position.x += 0.5f;
+		object.position.x -= 0.5f;
+		*/
+		return true;
+	}
+	else {
+		return false;
+	}
+
 	return true;
 }
