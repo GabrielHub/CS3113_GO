@@ -31,12 +31,17 @@ public:
 	glm::mat4 projectionMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 playerMatrix; //Model Matrices
+	glm::mat4 staticMatrix;
+	//map object matrices
+	glm::mat4 floorMatrix1;
+	glm::mat4 floorMatrix2;
 
 	//fontsheet
 	GLuint font;
 
 	//Objects
 	Object player;
+	std::vector<Object> floor;
 
 	//movement
 	float velocity;

@@ -154,6 +154,9 @@ void Setup(GameState &game) {
 	SheetSprite playerTexture5 = SheetSprite(spritesheet_id, 257.0 / 512.0f, 0.0 / 512.0f, 63.0 / 512.0f, 69.0 / 512.0f, 0.8f);
 	SheetSprite playerTexture6 = SheetSprite(spritesheet_id, 257.0 / 512.0f, 292.0 / 512.0f, 61.0 / 512.0f, 70.0 / 512.0f, 0.8f);
 	//SheetSprite playerTexture7 = SheetSprite(spritesheet_id, 257.0 / 512.0f, 0.0 / 512.0f, 63.0 / 512.0f, 69.0 / 512.0f, 0.8f); //left*/
+	//Ground and wall sprites
+	SheetSprite floor = SheetSprite(spritesheet_id, 0.0f, 437.0f / 512.0f, 70.0f / 512.0f, 70.0f / 512.0f, 0.5f);
+	SheetSprite walls = SheetSprite(spritesheet_id, 0.0f, 365.0f / 512.0f, 70.0f / 512.0f, 70.0f / 512.0f, 0.5f);
 	
 	/* Create Objects, example:
 		Object example(xposition, yposition, rotation (angle), textureID, width, height, velocity, direction x, direction y);
@@ -162,11 +165,14 @@ void Setup(GameState &game) {
 	*/
 	glm::vec3 position(0.0f, 0.0f, 0.0f);
 	glm::vec3 direction(1.0f, 1.0f, 1.0f);
-	game.player = Object(position, direction, playerTexture1, 60.0 / 1280.0f, 71.0 / 720.0f, false);
+	game.player = Object(position, direction, playerTexture1, (60.0f / 512.0f) * 0.05, (71.0f / 512.0f) * 0.05, false);
+	game.floor.push_back(Object(glm::vec3(-0.25f, 0.0f, 0.0f), direction, floor, (70.0f / 512.0f) * 0.5f, (70.0f / 512.0f) * 0.5f, true)); // Floor Left
+	game.floor.push_back(Object(glm::vec3(0.25f, 0.0f, 0.0f), direction, floor, (70.0f / 512.0f) * 0.5f, (70.0f / 512.0f) * 0.5f, true)); // Floor Right
+	
 }
 
 //Process inputs
-void Event(float elapsed) {
+void Event() {
 
 	while (SDL_PollEvent(&game.event)) {
 		if (game.event.type == SDL_QUIT || game.event.type == SDL_WINDOWEVENT_CLOSE) {
@@ -179,10 +185,10 @@ void Event(float elapsed) {
 
 	//For polling input, ex. if (keys[SDL_SCANCODE_A]) {}
 	if (keys[SDL_SCANCODE_A]) {
-		game.acceleration = -0.1f;
+		game.acceleration = -1.0f;
 	}
 	else if (keys[SDL_SCANCODE_D]) {
-		game.acceleration = 0.1f;
+		game.acceleration = 1.0f;
 	}
 	else {
 		game.acceleration = 0.0f;
@@ -201,6 +207,12 @@ void Update(float elapsed) {
 			acceleration: velocity_x += acceleration * elapsed;
 			velocity: position_x += velocity_x * elpased;
 		*/
+		game.playerMatrix = glm::mat4(1.0f);
+		game.floorMatrix1 = glm::mat4(1.0f);
+		game.floorMatrix2 = glm::mat4(1.0f);
+		//build map
+		game.floorMatrix1 = glm::translate(game.floorMatrix1, glm::vec3(game.floor[0].position.x, game.floor[0].position.y, 0.0f));
+		game.floorMatrix2 = glm::translate(game.floorMatrix2, glm::vec3(game.floor[1].position.x, game.floor[1].position.y, 0.0f));
 
 		//player movement
 		game.velocity = lerp(game.velocity, 0.0f, elapsed * game.friction);
@@ -208,6 +220,7 @@ void Update(float elapsed) {
 		game.player.position.x += game.velocity * elapsed;
 
 		game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(game.player.position.x, game.player.position.y, 0.0f));
+
 		break;
 	}
 }
@@ -230,13 +243,22 @@ void Render() {
 		break;
 
 	case STATE_GAME_LEVEL:
+		//Screen Color
+		glClearColor(0.2f, 0.4f, 0.7f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		//Set matrices
 		game.program.SetProjectionMatrix(game.projectionMatrix);
 		game.program.SetViewMatrix(game.viewMatrix);
-		game.program.SetModelMatrix(game.playerMatrix);
+		
 
 		//Draw Objects, using spritesheet object example.draw(program)
+		game.program.SetModelMatrix(game.floorMatrix1);
+		game.floor[0].sprite.Draw(game.program);
+		game.program.SetModelMatrix(game.floorMatrix2);
+		game.floor[1].sprite.Draw(game.program);
 		//Player
+		game.program.SetModelMatrix(game.playerMatrix);
 		game.player.sprite.Draw(game.program);
 		break;
 	}
@@ -252,7 +274,7 @@ int main(int argc, char *argv[])
 	Setup(game);
 
 	while (!game.done) {
-		Event(FIXED_TIMESTEP); //Check for input
+		Event(); //Check for input
 
 		//Game code
 		game.elapsed += game.accumulator;
