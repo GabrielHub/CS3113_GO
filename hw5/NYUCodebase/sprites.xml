@@ -1,0 +1,17 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="dirtLeft.png" x="0" y="365" width="70" height="70"/>
+	<SubTexture name="enemysprite.png" x="0" y="0" width="255" height="363"/>
+	<SubTexture name="grass.png" x="0" y="437" width="70" height="70"/>
+	<SubTexture name="trump_run_07.png" x="271" y="438" width="60" height="71"/>
+	<SubTexture name="trump_run_08.png" x="257" y="71" width="63" height="72"/>
+	<SubTexture name="trump_run_09.png" x="257" y="217" width="61" height="73"/>
+	<SubTexture name="trump_run_10.png" x="257" y="145" width="62" height="70"/>
+	<SubTexture name="trump_run_11.png" x="257" y="0" width="63" height="69"/>
+	<SubTexture name="trump_run_12.png" x="257" y="292" width="61" height="70"/>
+	<SubTexture name="trump_run_19.png" x="140" y="440" width="64" height="70"/>
+	<SubTexture name="trump_run_20.png" x="72" y="438" width="66" height="69"/>
+	<SubTexture name="trump_run_21.png" x="208" y="365" width="64" height="71"/>
+	<SubTexture name="trump_run_22.png" x="206" y="440" width="63" height="70"/>
+	<SubTexture name="trump_run_23.png" x="72" y="365" width="67" height="71"/>
+	<SubTexture name="trump_run_24.png" x="141" y="365" width="65" height="73"/>
+</TextureAtlas>
