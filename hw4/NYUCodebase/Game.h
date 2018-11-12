@@ -31,20 +31,22 @@ public:
 	glm::mat4 projectionMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 playerMatrix; //Model Matrices
-	glm::mat4 staticMatrix;
+	glm::mat4 enemyMatrix;
+	glm::mat4 rWallMatrix;
+	glm::mat4 lWallMatrix;
 	//map object matrices
-	glm::mat4 floorMatrix1;
-	glm::mat4 floorMatrix2;
+	std::vector<glm::mat4> floorMatrix;
 
 	//fontsheet
 	GLuint font;
 
 	//Objects
 	Object player;
+	Object enemy;
 	std::vector<Object> floor;
-
+	Object lWall;
+	Object rWall;
 	//movement
-	float velocity;
-	float acceleration;
-	float friction;
+	float gravity;
+	float trumpScale;
 };

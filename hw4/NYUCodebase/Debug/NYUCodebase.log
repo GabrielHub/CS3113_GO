@@ -1,5 +1,11 @@
-﻿  main.cpp
+﻿  Game.cpp
+  main.cpp
 z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(51): warning C4018: '<': signed/unsigned mismatch
 z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(112): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(168): warning C4305: 'argument': truncation from 'double' to 'float'
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(175): warning C4305: 'argument': truncation from 'double' to 'float'
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(248): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(261): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(293): warning C4018: '<': signed/unsigned mismatch
+z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\hw4\nyucodebase\main.cpp(368): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
   NYUCodebase.vcxproj -> Z:\OneDrive - nyu.edu\CS\gameprog\CS3113_GO\hw4\Debug\NYUCodebase.exe

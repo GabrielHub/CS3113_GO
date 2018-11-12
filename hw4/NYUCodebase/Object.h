@@ -12,9 +12,11 @@
 class Object {
 public:
 	Object();
-	Object(glm::vec3 position, glm::vec3 direction, SheetSprite sprite, float width, float height, bool isStatic);
+	Object(glm::vec3 position, SheetSprite sprite, float width, float height, bool isStatic);
 
 	bool EntityCollision(Object &object);
+
+	bool GravityCheck(Object &object);
 
 	//template entity variables
 	glm::vec3 position; // position[1] = x, position[2] = y, position[3] = z *keep zero
@@ -23,9 +25,13 @@ public:
 	float width;
 	float height;
 	bool isStatic;
+	bool onFloor;
 
 	//textures
 	std::vector<SheetSprite> spriteArray;
 	//game specific variables
+	glm::vec2 velocity;
+	float acceleration;
+	float friction;
 	
 };

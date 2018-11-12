@@ -12,12 +12,10 @@ GameState::GameState() {
 
 	//Model Matrices
 	playerMatrix = glm::mat4(1.0f);
-	staticMatrix = glm::mat4(1.0f);
-	floorMatrix1 = glm::mat4(1.0f);
-	floorMatrix2 = glm::mat4(1.0f);
+	enemyMatrix = glm::mat4(1.0f);
+	rWallMatrix = glm::mat4(1.0f);
+	lWallMatrix = glm::mat4(1.0f);
 
 	//movement
-	velocity = 0.0f;
-	acceleration = 0.0f;
-	friction = 2.0f;
+	gravity = -0.4f;
 }
