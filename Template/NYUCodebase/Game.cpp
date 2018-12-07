@@ -5,6 +5,8 @@ GameState::GameState() {
 	lastFrameTicks = 0.0f;
 	elapsed = 0.0f;
 
+	gravity = -0.4f;
+
 	done = false;
 
 	projectionMatrix = glm::mat4(1.0f);

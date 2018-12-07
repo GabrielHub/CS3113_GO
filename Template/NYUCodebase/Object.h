@@ -11,19 +11,23 @@
 class Object {
 public:
 	Object();
-	Object(glm::vec3 position, glm::vec3 direction, SheetSprite sprite, float width, float height, float velocity, float acceleration, bool isStatic);
+	Object(glm::vec3 position, glm::vec3 direction, SheetSprite sprite, float width, float height, glm::vec2 velocity, glm::vec2 acceleration);
 
 	bool EntityCollision(Object &object);
+
+	bool GravityCheck(Object &object);
 
 	//template entity variables
 	glm::vec3 position; // position[1] = x, position[2] = y, position[3] = z *keep zero
 	glm::vec3 direction; // direction[1] = x direction...
-	SheetSprite sprite;
 	float width;
 	float height;
-	float velocity;
-	float acceleration;
-	bool isStatic;
 
-	//game specific variables
+	//textures
+	SheetSprite sprite;
+
+	//physics
+	glm::vec2 velocity;
+	glm::vec2 acceleration;
+	float friction;
 };

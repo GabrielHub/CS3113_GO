@@ -31,8 +31,7 @@
 #define MAX_TIMESTEPS 6
 
 /*
-	Template: Update for homework 4
-	Currently on: Time code
+	Template: Needs update to objects
 */
 
 enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
@@ -40,12 +39,6 @@ enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
 GameState game;
 GameMode mode = STATE_MAIN_MENU;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
-
-//Collision detection for 2 objects
-bool detectCollision(Object one, Object two) {
-	//Needs updating
-	return false;
-}
 
 //Function that converts strings to drawn text from sprite sheet
 void DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) {
@@ -143,6 +136,24 @@ void Setup(GameState &game) {
 	game.elapsed = ticks - game.lastFrameTicks;
 	game.lastFrameTicks = game.elapsed;
 
+	/*
+	Sound Code: (int) Mix_OpenAudio(int frequency, Uint16 format, int channels, int chunksize);
+	^ Initializes SDL_mixer with frequency, format, channel and buffer size.
+
+	Load Sound: Mix_Chunk *someSound;
+	someSound = Mix_LoadWAV(“some_sound.wav");
+
+	Playing Sound: (int) Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops);
+	Setting Volume: Mix_VolumeMusic(30); // set music volume (from 0 to 128), Mix_VolumeChunk(shootSound, 10); // set sound volume (from 0 to 128)
+	*/
+
+	/*
+	Music Code:
+	Mix_Music *music;
+	music = Mix_LoadMUS( "music.mp3" );
+	Playing: (int) Mix_PlayMusic(Mix_Music *music, int loops);
+	*/
+
 	/*Load Textures
 	Ex: example = LoadTexture(RESOURCE_FOLDER "example.example");
 	SheetSprite exampleTexture = SheetSprite(unsigned int textureID, float u, float v, float width, float height, float size);
@@ -176,10 +187,17 @@ void Update(float elapsed) {
 	case STATE_GAME_LEVEL:
 		//Changes
 		/*
-			Translation exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0);
-			friction: velocity = lerp(velocity, 0.0f, elapsed * friction_x);
-			acceleration: velocity_x += acceleration * elapsed;
-			velocity: position_x += velocity_x * elpased;
+			Matrix exmaple: modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f (x), 1.0f (y), keep 0);
+			Movement example: 
+				game.playerMatrix = glm::mat4(1.0f);
+				game.player.velocity.x = lerp(game.player.velocity.x, 0.0f, elapsed * game.player.friction);
+				game.player.velocity.y = lerp(game.player.velocity.y, 0.0f, elapsed * -game.gravity);
+				game.player.velocity.x += game.player.acceleration * elapsed;
+				game.player.position.x += game.player.velocity.x * elapsed;
+				game.player.position.y += game.player.velocity.y * elapsed;
+				game.playerMatrix = glm::translate(game.playerMatrix, glm::vec3(game.player.position.x, game.player.position.y, 0.0f));
+			REMEMBER: \
+				to reset matrices at start of each frame
 		*/
 
 		break;
@@ -217,7 +235,7 @@ void Render() {
 
 //Clean up memory
 void Clean() {
-	
+	//remove sounds, Mix_FreeChunk(game.jumpSound);
 }
 
 int main(int argc, char *argv[])

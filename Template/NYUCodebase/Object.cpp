@@ -3,55 +3,29 @@
 Object::Object() {}
 
 //Object(glm::vec3 position, glm::vec3 direction, float rotation, SheetSprite sprite, float width, float height, float velocity);
-Object::Object(glm::vec3 position, glm::vec3 direction, SheetSprite sprite, float width, float height, float velocity, float acceleration, bool isStatic) : position(position), direction(direction), sprite(sprite), width(width), height(height), velocity(velocity), acceleration(acceleration), isStatic(isStatic) {}
+Object::Object(glm::vec3 position, glm::vec3 direction, SheetSprite sprite, float width, float height, glm::vec2 velocity, glm::vec2 acceleration) : position(position), direction(direction), sprite(sprite), width(width), height(height), velocity(velocity), acceleration(acceleration) {}
 
-//Collision
+//Collision for dynamic objects
 bool Object::EntityCollision(Object &object) {
-	//Check top
-	if ((position.x + sprite.size / 2) <= (object.position.y + object.sprite.size / 2)) {
-		/*position.y += 0.5f;
-		object.position.y -= 0.5f;*/
+	if (position.x <= object.position.x + 0.1f && position.x >= object.position.x - 0.1f) {
+		if (position.y <= (object.position.y + 0.15f) && position.y >= (object.position.y - 0.15f)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+//Check if on floor (incomplete)
+bool Object::GravityCheck(Object& object) {
+	/*if ((position.x) <= (object.position.x + 0.25f) && position.x >= (object.position.x - 0.25f)) {
+		if ((position.y - height / 2) <= (object.position.y + 0.27f)) {
+			return true;
+		}
+	}*/
+	if ((position.y - height / 2) <= (object.position.y + 0.27f)) {
 		return true;
 	}
 	else {
 		return false;
 	}
-
-	//check bottom
-	if ((position.y + sprite.size / 2) >= (object.position.y - object.sprite.size / 2)) {
-		/*
-		position.y -= 0.5f;
-		object.position.y += 0.5f;
-		*/
-		return true;
-	}
-	else {
-		return false;
-	}
-
-	//check right
-	if ((position.x + sprite.size / 2) <= (object.position.x - object.sprite.size / 2)) {
-		/*
-		position.x -= 0.5f;
-		object.position.x += 0.5f;
-		*/
-		return true;
-	}
-	else {
-		return false;
-	}
-
-	//check left
-	if ((position.x - sprite.size / 2) >= (object.position.x + object.sprite.size / 2)) {
-		/*
-		position.x += 0.5f;
-		object.position.x -= 0.5f;
-		*/
-		return true;
-	}
-	else {
-		return false;
-	}
-
-	return true;
 }

@@ -31,9 +31,14 @@ public:
 	glm::mat4 viewMatrix;
 	glm::mat4 modelMatrix; //Model Matrices
 
+	//Sound and music
+
 	//Textures
 	GLuint test;
 
 	//Objects
 	Object player;
+
+	//global physics
+	float gravity;
 };
