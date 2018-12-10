@@ -1,0 +1,4 @@
+<TextureAtlas imagePath="bullets.png">
+	<SubTexture name="ufoBlue.png" x="0" y="93" width="91" height="91"/>
+	<SubTexture name="ufoGreen.png" x="0" y="0" width="91" height="91"/>
+</TextureAtlas>

@@ -3,24 +3,46 @@
 Object::Object() {}
 
 //Object(glm::vec3 position, glm::vec3 direction, float rotation, SheetSprite sprite, float width, float height, float velocity);
-Object::Object(glm::vec3 position, glm::vec3 direction, float width, float height, glm::vec2 velocity, glm::vec2 acceleration) : position(position), direction(direction), width(width), height(height), velocity(velocity), acceleration(acceleration) {}
+Object::Object(glm::vec3 position, float width, float height, SheetSprite sprite) : position(position), width(width), height(height), sprite(sprite) {}
+
+Player::Player() {}
+
+Player::Player(glm::vec3 pos, glm::vec3 direction, float w, float h, glm::vec2 velocity, glm::vec2 acceleration, float friction) : direction(direction), velocity(velocity), acceleration(acceleration), friction(friction) {
+	position = pos;
+	width = w;
+	height = h;
+	onFloor = false;
+	state = STATE_STANDING;
+	currentIndex = 0;
+}
 
 //Collision for dynamic objects
-bool Object::EntityCollision(Object &object) {
-	if (position.x <= object.position.x + 0.1f && position.x >= object.position.x - 0.1f) {
-		if (position.y <= (object.position.y + 0.15f) && position.y >= (object.position.y - 0.15f)) {
+bool Player::EntityCollision(Object &object) {
+	if ((position.x - (width / 2)) <= object.position.x + (object.width / 2) && (position.x + (width / 2)) >= object.position.x - (object.width / 2)) {
+		if ((position.y - height / 2) <= (object.position.y + (object.height / 2)) && (position.y + height / 2) >= (object.position.y - (object.height / 2))) {
 			return true;
 		}
 	}
 	return false;
 }
 
-//Check if on floor (incomplete)
-bool Object::GravityCheck(Object& object) {
-	if ((position.y - height / 2) <= (object.position.y + 0.27f)) {
-		return true;
+Bullet::Bullet() {}
+
+Bullet::Bullet(glm::vec3 pos, float w, float h, glm::vec2 v, glm::vec2 a, SheetSprite s) {
+	position = position;
+	width = w;
+	height = h;
+	velocity = v;
+	acceleration = a;
+	sprite = s;
+	state = STATE_UNFIRED;
+}
+
+bool Bullet::EntityCollision(Object &object) {
+	if ((position.x - (width / 2)) <= object.position.x + (object.width / 2) && (position.x + (width / 2)) >= object.position.x - (object.width / 2)) {
+		if ((position.y - height / 2) <= (object.position.y + (object.height / 2)) && (position.y + height / 2) >= (object.position.y - (object.height / 2))) {
+			return true;
+		}
 	}
-	else {
-		return false;
-	}
+	return false;
 }

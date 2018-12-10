@@ -7,6 +7,8 @@
 #include <SDL_image.h>
 #include "ShaderProgram.h"
 
+#include <SDL_mixer.h>
+
 #include "Object.h"
 #include <vector>
 
@@ -32,20 +34,28 @@ public:
 	glm::mat4 viewMatrix;
 	glm::mat4 player1Matrix; //Model Matrices
 	glm::mat4 player2Matrix;
+	glm::mat4 textMatrix;
 	std::vector<glm::mat4> map1Matrix;
 	glm::mat4 bullet1Matrix;
 	glm::mat4 bullet2Matrix;
 
+	int map;
+
 	//Sound and music
+	Mix_Chunk *jumpSound;
 
 	//Textures
 	GLuint test;
 	GLuint font;
 
 	//Objects
-	Object player;
+	Player player1;
 	std::vector<Object> map1;
 
 	//global physics
 	float gravity;
+
+	//animation
+	float animationElapsed;
+	float fps = 30.0f;
 };

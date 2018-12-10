@@ -25,6 +25,8 @@
 #include "SheetSprite.h"
 #include <vector>
 #include <cmath>
+#include <iostream>
+#include <SDL_mixer.h>
 
 //60FPS (1.0/60.0)
 #define FIXED_TIMESTEP 0.0166666f
@@ -153,6 +155,9 @@ void Setup(GameState &game) {
 	music = Mix_LoadMUS( "music.mp3" );
 	Playing: (int) Mix_PlayMusic(Mix_Music *music, int loops);
 	*/
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+	game.jumpSound = Mix_LoadWAV("jump_sound.wav");
+	Mix_VolumeChunk(game.jumpSound, 15);
 
 	/*Load Textures
 	Ex: example = LoadTexture(RESOURCE_FOLDER "example.example");
@@ -162,27 +167,56 @@ void Setup(GameState &game) {
 	GLuint character_texture = LoadTexture(RESOURCE_FOLDER "aliens.png"); //Load character spritesheet
 	GLuint tiles_texture = LoadTexture(RESOURCE_FOLDER "tiles_spritesheet.png"); //Load other spritesheet for map building
 	GLuint font_texture = LoadTexture(RESOURCE_FOLDER "font.png"); //Load font ssheet
+	GLuint bullet_texture = LoadTexture(RESOURCE_FOLDER "bullets.png");
 	game.font = font_texture;
 
 	//Map sprites
-	SheetSprite floorSprite = SheetSprite(tiles_texture, 144.0f / 1024.0f, 576.0f / 1024.0f, 70.0f / 1024.0f, 70.0f / 1024.0f, 0.2f); //sprite for every floor
+	SheetSprite floorSprite = SheetSprite(tiles_texture, 144.0f / 1024.0f, 576.0f / 1024.0f, 70.0f / 1024.0f, 70.0f / 1024.0f, 0.3f); //sprite for every floor
+
+	//bullet sprites
+	SheetSprite bullet1Sprite = SheetSprite(bullet_texture, 0.0f / 128.0f, 93.0f / 256.0f, 91.0f / 128.0f, 91.0f / 256.0f, 0.02f);
+	SheetSprite bullet2Sprite = SheetSprite(bullet_texture, 0.0f / 128.0f, 0.0f / 256.0f, 91.0f / 128.0f, 91.0f / 256.0f, 0.02f);
 	
-	//sprites for animation
-	SheetSprite p1_standing = SheetSprite(character_texture, 676.0f / 1024.0f, 368.0f / 512.0f, 66.0f / 1024.0f, 92.0f / 512.0f, 0.5f); //default sprite for player 1
+	//sprites for animation for player1
+	SheetSprite p1_standing = SheetSprite(character_texture, 676.0f / 1024.0f, 368.0f / 512.0f, 66.0f / 1024.0f, 92.0f / 512.0f, 0.15f); //default sprite for player 1
+	SheetSprite p1_jumping = SheetSprite(character_texture, 478.0f / 1024.0f, 270.0f / 512.0f, 66.0f / 1024.0f, 93.0f / 512.0f, 0.15f); //jump sprite for player 1
+	SheetSprite p1_walk1 = SheetSprite(character_texture, 544.0f / 1024.0f, 267.0f / 512.0f, 66.0f / 1024.0f, 93.0f / 512.0f, 0.15f); //walk1 sprite for player 1
+	SheetSprite p1_walk2 = SheetSprite(character_texture, 345.0f / 1024.0f, 175.0f / 512.0f, 67.0f / 1024.0f, 96.0f / 512.0f, 0.15f); //walk1 sprite for player 1
+
+	//sprites for animation for player2
+	SheetSprite p2_standing = SheetSprite(character_texture, 676.0f / 1024.0f, 368.0f / 512.0f, 66.0f / 1024.0f, 92.0f / 512.0f, 0.15f); //default sprite for player 1
+	SheetSprite p2_jumping = SheetSprite(character_texture, 478.0f / 1024.0f, 270.0f / 512.0f, 66.0f / 1024.0f, 93.0f / 512.0f, 0.15f); //jump sprite for player 1
+	SheetSprite p2_walk1 = SheetSprite(character_texture, 544.0f / 1024.0f, 267.0f / 512.0f, 66.0f / 1024.0f, 93.0f / 512.0f, 0.15f); //walk1 sprite for player 1
+	SheetSprite p2_walk2 = SheetSprite(character_texture, 345.0f / 1024.0f, 175.0f / 512.0f, 67.0f / 1024.0f, 96.0f / 512.0f, 0.15f); //walk1 sprite for player 1
 
 	/* Create Objects, example:
-		Object(glm::vec3 position, glm::vec3 direction, float width, float height, glm::vec2 velocity, glm::vec2 acceleration);
-		^ remember to intialize width and height by the sprite values * size, and to set sprites after
-	*/
-	game.map1.push_back(Object(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f), 70.0f / 1024.0f, 70.0f / 1024.0f, glm::vec2(0.0f), glm::vec2(0.0f)));
-	game.map1[0].defaultSprite = floorSprite;
-	game.map1Matrix.push_back(glm::mat4(1.0f));
-	game.map1.push_back(Object(glm::vec3(0.0f), glm::vec3(0.0f), 70.0f / 1024.0f, 70.0f / 1024.0f, glm::vec2(0.0f), glm::vec2(0.0f)));
-	game.map1[1].defaultSprite = floorSprite;
-	game.map1Matrix.push_back(glm::mat4(1.0f));
+		Object(glm::vec3 position, float width, float height, SheetSprite sprite);
+		^ width is size * width / height, height is size
 
-	game.player = Object(glm::vec3(0.0f), glm::vec3(0.0f), 70.0f / 1024.0f, 70.0f / 1024.0f, glm::vec2(0.0f), glm::vec2(0.0f));
-	game.player.defaultSprite = p1_standing;
+		Player(glm::vec3 position, glm::vec3 direction, float width, float height, glm::vec2 velocity, glm::vec2 acceleration, float friction);
+
+		Bullet(glm::vec3 pos, float w, float h, glm::vec2 v, glm::vec2 a, SheetSprite s)
+	*/
+
+	//create map1
+	for (int i = 0; i < 9; i++) {
+		//Map 1 is a straight floor
+		game.map1.push_back(Object(glm::vec3(-1.2f + i*(0.30f), -0.5f, 0.0f), floorSprite.size * (floorSprite.width / floorSprite.height), floorSprite.size, floorSprite));
+		game.map1Matrix.push_back(glm::mat4(1.0f));
+	}
+
+	//create map2
+
+	//create map3
+
+	//create player1
+	game.player1 = Player(glm::vec3(0.0f), glm::vec3(1.0f), p1_standing.size * (p1_standing.width / p1_standing.height), p1_standing.size, glm::vec2(0.0f), glm::vec2(0.0f), 0.8f);
+	game.player1.standingSprite = p1_standing;
+	game.player1.jumpSprite = p1_jumping;
+	game.player1.walk1Sprite = p1_walk1;
+	game.player1.walk2Sprite = p2_walk2;
+	game.player1.currentSprite = &game.player1.standingSprite;
+	game.player1.bullet = new Bullet(glm::vec3(0.0f), bullet1Sprite.size * bullet1Sprite.width / bullet1Sprite.height, bullet1Sprite.size, glm::vec2(0.0f), glm::vec2(0.0f), bullet1Sprite); //create initial bullet
 }
 
 //Process inputs
@@ -195,19 +229,57 @@ void Event() {
 			if (mode == STATE_MAIN_MENU) {
 				mode = STATE_GAME_LEVEL;
 			}
+			else if (game.event.key.keysym.scancode == SDL_SCANCODE_W) {
+				if (game.player1.state != Player::STATE_JUMPING) {
+					game.player1.position.y += 0.02f;
+					game.player1.velocity.y = 1.0f;
+					game.player1.onFloor = false;
+
+					//JumpSound
+					Mix_PlayChannel(-1, game.jumpSound, 0);
+				}
+			}
+			else if (game.event.key.keysym.scancode == SDL_SCANCODE_P) {
+				game.done = true;
+			}
 			else if (game.event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				
+				game.player1.bullet->state = Bullet::STATE_FIRED;
+				game.player1.bullet->acceleration.x = 1.0f;
 			}
 		}
 	}
 
 	//For polling input, ex. if (keys[SDL_SCANCODE_A]) {}
-	
+	if (keys[SDL_SCANCODE_A]) {
+		game.player1.acceleration.x = -0.4f;
+		if (game.player1.state != Player::STATE_JUMPING) {
+			game.player1.state = Player::STATE_WALKING;
+			game.player1.direction.x = -1.0f;
+		}
+	}
+	else if (keys[SDL_SCANCODE_D]) {
+		game.player1.acceleration.x = 0.4f;
+		if (game.player1.state != Player::STATE_JUMPING) {
+			game.player1.state = Player::STATE_WALKING;
+			game.player1.direction.x = 1.0f;
+		}
+	}
+	else {
+		game.player1.acceleration.x = 0.0f;
+		if (game.player1.state != Player::STATE_JUMPING) {
+			game.player1.state = Player::STATE_STANDING;
+		}
+	}
 }
 
 //Updating, Move all objects based on time and velocity
 void Update(float elapsed) {
 	switch (mode) {
+	case STATE_MAIN_MENU:
+		game.textMatrix = glm::mat4(1.0f);
+		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, 0.0f, 0.0f));
+		break;
+
 	case STATE_GAME_LEVEL:
 		//Changes
 		/*
@@ -223,11 +295,88 @@ void Update(float elapsed) {
 			REMEMBER: \
 				to reset matrices at start of each frame
 		*/
+
+		//animation
+		game.animationElapsed += elapsed;
+
+		//build map
 		for (int i = 0; i < game.map1Matrix.size(); i++) {
 			game.map1Matrix[i] = glm::mat4(1.0f);
 			game.map1Matrix[i] = glm::translate(game.map1Matrix[i], glm::vec3(game.map1[i].position.x, game.map1[i].position.y, 0.0f));
 		}
 
+		//Player 1
+			//Check if player is touching the ground and do gravity on player
+		if (!game.player1.onFloor) {
+			bool collision = false;
+			for (int i = 0; i < game.map1.size(); i++) {
+				if (game.player1.EntityCollision(game.map1[i])) {
+					collision = true;
+					game.player1.velocity.y = 0.0f;
+					game.player1.onFloor = true;
+					game.player1.state = Player::STATE_STANDING;
+				}
+			}
+			if (!collision) {
+				game.player1.onFloor = false;
+				game.player1.velocity.y += game.gravity * elapsed; // gravity
+				game.player1.state = Player::STATE_JUMPING;
+			}
+		}
+		else {
+			//check if player has run off floor
+			bool fallenOff = true;
+			for (int i = 0; i < game.map1.size(); i++) {
+				if (game.player1.EntityCollision(game.map1[i])) {
+					fallenOff = false;
+					game.player1.velocity.y = 0.0f;
+					game.player1.onFloor = true;
+				}
+			}
+			if (fallenOff) {
+				game.player1.onFloor = false;
+				game.player1.state = Player::STATE_JUMPING;
+			}
+		}
+			//player1 movement
+		game.player1Matrix = glm::mat4(1.0f);
+		game.player1.velocity.x = lerp(game.player1.velocity.x, 0.0f, elapsed * game.player1.friction);
+		game.player1.velocity.y = lerp(game.player1.velocity.y, 0.0f, elapsed * -game.gravity);
+		game.player1.velocity.x += game.player1.acceleration.x * elapsed;
+		game.player1.position.x += game.player1.velocity.x * elapsed;
+		game.player1.position.y += game.player1.velocity.y * elapsed;
+		game.player1Matrix = glm::translate(game.player1Matrix, glm::vec3(game.player1.position.x, game.player1.position.y, 0.0f));
+
+			//player1 bullet movement
+		game.bullet1Matrix = glm::mat4(1.0f);
+		game.player1.bullet->velocity.x += game.player1.bullet->acceleration.x * elapsed;
+		game.player1.bullet->position.x += game.player1.bullet->velocity.x * elapsed;
+		if (game.player1.bullet->state == Bullet::STATE_UNFIRED) {
+			game.player1.bullet->position = game.player1.position;
+		}
+		game.bullet1Matrix = glm::translate(game.bullet1Matrix, glm::vec3(game.player1.bullet->position.x, game.player1.bullet->position.y, 0.0f));
+		
+			//player 1 animation
+		if (game.player1.state == Player::STATE_STANDING) {
+			game.player1.currentSprite = &game.player1.standingSprite;
+		}
+		else if (game.player1.state == Player::STATE_JUMPING) {
+			game.player1.currentSprite = &game.player1.jumpSprite;
+		}
+		else {
+			//for walking
+			if (game.player1.currentSprite == &game.player1.walk1Sprite && game.player1.currentIndex == 0) {
+				game.player1.currentSprite = &game.player1.walk2Sprite;
+			}
+			else if (game.player1.currentSprite == &game.player1.walk2Sprite && game.player1.currentIndex == 1) {
+				game.player1.currentSprite = &game.player1.walk1Sprite;
+			}
+			else {
+				game.player1.currentSprite = &game.player1.walk1Sprite;
+			}
+		}
+			//flip player depending on direction
+		game.player1Matrix = glm::scale(game.player1Matrix, glm::vec3(game.player1.direction.x, 1.0f, 0.0f));
 		break;
 	}
 }
@@ -239,10 +388,15 @@ void Render() {
 		//Set matrices
 		game.program.SetProjectionMatrix(game.projectionMatrix);
 		game.program.SetViewMatrix(game.viewMatrix);
-		game.program.SetModelMatrix(game.player1Matrix);
+
+		game.program.SetModelMatrix(game.textMatrix);
 
 		//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
-		DrawText(game.program, game.font, "Odin ... You have one shot", 0.05f, 0.0f);
+		DrawText(game.program, game.font, "Odin ... You have one shot", 0.08f, 0.0f);
+
+		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, -0.4f, 0.0f));
+		game.program.SetModelMatrix(game.textMatrix);
+		DrawText(game.program, game.font, "Press Any Key To Continue and P to Quit", 0.05f, 0.0f);
 
 		break;
 	case STATE_GAME_LEVEL:
@@ -258,11 +412,28 @@ void Render() {
 		//Draw Objects, using spritesheet object example.draw(program)
 		for (int i = 0; i < game.map1.size(); i++) {
 			game.program.SetModelMatrix(game.map1Matrix[i]);
-			game.map1[i].defaultSprite.Draw(game.program);
+			game.map1[i].sprite.Draw(game.program);
 		} // draw map objects
 		
 
-		//Player
+		//Player1
+		game.program.SetModelMatrix(game.player1Matrix);
+		game.player1.currentSprite->Draw(game.program);
+		if (game.player1.bullet->state == Bullet::STATE_FIRED) {
+			game.program.SetModelMatrix(game.bullet1Matrix);
+			game.player1.bullet->sprite.Draw(game.program);
+		}
+
+		//Animation
+		if (game.animationElapsed > 1.0 / game.fps) {
+			game.animationElapsed = 0.0f;
+			game.player1.currentIndex++;
+
+			if (game.player1.currentIndex > 0) {
+				game.player1.currentIndex = 0;
+			}
+		}
+
 		break;
 	}
 }
@@ -270,6 +441,9 @@ void Render() {
 //Clean up memory
 void Clean() {
 	//remove sounds, Mix_FreeChunk(game.jumpSound);
+	Mix_FreeChunk(game.jumpSound);
+
+	delete game.player1.bullet;
 }
 
 int main(int argc, char *argv[])
