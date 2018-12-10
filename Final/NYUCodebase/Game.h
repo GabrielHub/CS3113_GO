@@ -50,7 +50,13 @@ public:
 
 	//Objects
 	Player player1;
+	Player player2;
 	std::vector<Object> map1;
+
+	//win states
+	Player* map1Winner;
+	Player* map2Winner;
+	Player* map3Winner;
 
 	//global physics
 	float gravity;

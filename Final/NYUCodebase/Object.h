@@ -34,7 +34,7 @@ public:
 	bool EntityCollision(Object &object);
 
 	//bulletstate
-	enum bulletState { STATE_FIRED, STATE_UNFIRED };
+	enum bulletState { STATE_FIRED, STATE_UNFIRED, STATE_DESTROYED };
 	bulletState state;
 
 	//physics
