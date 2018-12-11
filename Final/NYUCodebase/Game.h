@@ -49,6 +49,12 @@ public:
 
 	//Sound and music
 	Mix_Chunk *jumpSound;
+	Mix_Chunk *fire;
+	Mix_Chunk *reload;
+	Mix_Chunk *die;
+	Mix_Chunk *collision;
+	Mix_Chunk *empty;
+	Mix_Music *music;
 
 	//Textures
 	GLuint test;

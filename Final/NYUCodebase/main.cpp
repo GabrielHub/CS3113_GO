@@ -35,15 +35,12 @@
 /*
 	Final Project by Gabriel Ong:
 	A, D for player 1 movement. W to jump, SPACE to fire bullet
-	LEFT, RIGHT for player 2 movement. UP to jump, M to fire bullet
+	LEFT, RIGHT for player 2 movement. UP to jump, RCTRL to fire bullet
 
 	Explanation:
 	Both players have only one bullet. New bullets spawn only if both players have fired. Whoever wins 2 out of 3 maps wins.
 
-	TODO:
-	Build map 3 and check code for it
-	
-	Add game sounds and background music
+	Sounds are royalty free, music credit goes to Erik Giovani and Evan Wills
 */
 
 enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_BETWEEN_MENU, STATE_GAME_OVER};
@@ -51,6 +48,8 @@ enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_BETWEEN_MENU, STATE_GAM
 GameState game;
 GameMode mode = STATE_MAIN_MENU;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
+int p1Counter = 0;
+int p2Counter = 0;
 
 //RNG
 static std::default_random_engine generator;
@@ -88,7 +87,7 @@ void DrawText(ShaderProgram &program, int fontTexture, std::string text, float s
 
 	glBindTexture(GL_TEXTURE_2D, fontTexture);
 
-	//glUseProgram(program.programID);
+	glUseProgram(program.programID);
 	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertexData.data());
 	glEnableVertexAttribArray(program.positionAttribute);
 
@@ -123,7 +122,7 @@ GLuint LoadTexture(const char* filePath) {
 
 //Linear Interpolation
 float lerp(float v0, float v1, float t) {
-	return (1.0 - t) * v0 + t * v1;
+	return (1.0f - t) * v0 + t * v1;
 }
 
 //Setup Function
@@ -167,8 +166,23 @@ void Setup(GameState &game) {
 	Playing: (int) Mix_PlayMusic(Mix_Music *music, int loops);
 	*/
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+
 	game.jumpSound = Mix_LoadWAV("jump_sound.wav");
-	Mix_VolumeChunk(game.jumpSound, 15);
+	Mix_VolumeChunk(game.jumpSound, 18);
+	game.collision = Mix_LoadWAV("collision.wav");
+	Mix_VolumeChunk(game.collision, 50);
+	game.die = Mix_LoadWAV("die.wav");
+	Mix_VolumeChunk(game.die, 50);
+	game.reload = Mix_LoadWAV("reload.wav");
+	Mix_VolumeChunk(game.reload, 50);
+	game.empty = Mix_LoadWAV("empty.wav");
+	Mix_VolumeChunk(game.empty, 50);
+	game.fire = Mix_LoadWAV("fire.wav");
+	Mix_VolumeChunk(game.fire, 75);
+
+	game.music = Mix_LoadMUS("music.mp3");
+	Mix_VolumeMusic(20);
+	Mix_PlayMusic(game.music, -1);
 
 	/*Load Textures
 	Ex: example = LoadTexture(RESOURCE_FOLDER "example.example");
@@ -216,6 +230,7 @@ void Setup(GameState &game) {
 		game.map1.push_back(Object(glm::vec3(-1.2f + i*(0.30f), -0.5f, 0.0f), floorSprite.size * (floorSprite.width / floorSprite.height), floorSprite.size, floorSprite));
 		game.map1Matrix.push_back(glm::mat4(1.0f));
 	}
+	//ammobox
 	game.map1.push_back(Object(glm::vec3(0.0f, 0.0f, 0.0f), ammoSprite.size * (ammoSprite.width / ammoSprite.height), ammoSprite.size, ammoSprite)); //add Ammobox
 	game.map1Matrix.push_back(glm::mat4(1.0f));
 
@@ -225,10 +240,24 @@ void Setup(GameState &game) {
 		game.map2.push_back(Object(glm::vec3(-1.5f + i * (0.6f), -1.0f, 0.0f), floorSprite.size * (floorSprite.width / floorSprite.height), floorSprite.size, floorSprite));
 		game.map2Matrix.push_back(glm::mat4(1.0f));
 	}
+	//ammobox
 	game.map2.push_back(Object(glm::vec3(0.0f, -0.35f, 0.0f), ammoSprite.size * (ammoSprite.width / ammoSprite.height), ammoSprite.size, ammoSprite)); //add Ammobox
 	game.map2Matrix.push_back(glm::mat4(1.0f));
 
 	//create map3
+	for (int i = 0; i < 4; i++) {
+		//Map 3, build left rows
+		game.map3.push_back(Object(glm::vec3(-1.2f + i * (0.3f), -0.2f - i * (0.15f), 0.0f), floorSprite.size * (floorSprite.width / floorSprite.height), floorSprite.size, floorSprite));
+		game.map3Matrix.push_back(glm::mat4(1.0f));
+	}
+	for (int i = 1; i < 5; i++) {
+		//Map 3, build left rows
+		game.map3.push_back(Object(glm::vec3((game.map3[3].position.x + game.map3[3].width / 2) + i * (0.3f), game.map3[3].position.y + i * (0.15f), 0.0f), floorSprite.size * (floorSprite.width / floorSprite.height), floorSprite.size, floorSprite));
+		game.map3Matrix.push_back(glm::mat4(1.0f));
+	}
+	//ammobox
+	game.map3.push_back(Object(glm::vec3(0.0f, 0.0f, 0.0f), ammoSprite.size * (ammoSprite.width / ammoSprite.height), ammoSprite.size, ammoSprite)); //add Ammobox
+	game.map3Matrix.push_back(glm::mat4(1.0f));
 
 	//create player1
 	game.player1 = Player(glm::vec3(-0.3f, 0.0f, 0.0f), glm::vec3(1.0f), p1_standing.size * (p1_standing.width / p1_standing.height), p1_standing.size, glm::vec2(0.0f), glm::vec2(0.0f), 0.8f);
@@ -259,13 +288,18 @@ void Event() {
 			if (mode == STATE_MAIN_MENU) {
 				mode = STATE_GAME_LEVEL;
 			}
+			else if (mode == STATE_GAME_OVER) {
+				game.done = true;
+			}
 			else if (mode == STATE_BETWEEN_MENU) {
-				mode = STATE_GAME_LEVEL;
-				if (game.map == 4) {
+				game.map++; //go to next map
+				
+				if (game.map > 3) {
 					mode = STATE_GAME_OVER;
 				}
-				game.map++; //go to next map
-
+				else {
+					mode = STATE_GAME_LEVEL;
+				}
 				//reset players and stuff
 				game.player1.acceleration = glm::vec2(0.0f);
 				game.player1.velocity = glm::vec2(0.0f);
@@ -286,6 +320,10 @@ void Event() {
 					game.player2.position = glm::vec3(-0.8f, 0.0f, 0.0f);
 
 				}
+				else if (game.map == 3) {
+					game.player1.position = glm::vec3(0.8f, 1.0f, 0.0f);
+					game.player2.position = glm::vec3(-0.8f, 1.0f, 0.0f);
+				}
 			}
 			else if (game.event.key.keysym.scancode == SDL_SCANCODE_W) {
 				if (game.player1.state != Player::STATE_JUMPING) {
@@ -301,21 +339,39 @@ void Event() {
 				game.done = true;
 			}
 			else if (game.event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				game.player1.bullet->state = Bullet::STATE_FIRED;
-				if (game.player1.direction.x > 0) {
-					game.player1.bullet->acceleration.x = 1.5f;
+				if (game.player1.bullet->state == Bullet::STATE_UNFIRED) {
+					game.player1.bullet->state = Bullet::STATE_FIRED;
+					if (game.player1.direction.x > 0) {
+						game.player1.bullet->acceleration.x = 1.5f;
+					}
+					else {
+						game.player1.bullet->acceleration.x = -1.5f;
+					}
+
+					//Fire Sound
+					Mix_PlayChannel(-1, game.fire, 0);
 				}
 				else {
-					game.player1.bullet->acceleration.x = -1.5f;
+					//empty Sound
+					Mix_PlayChannel(-1, game.empty, 0);
 				}
 			}
-			else if (game.event.key.keysym.scancode == SDL_SCANCODE_M) {
-				game.player2.bullet->state = Bullet::STATE_FIRED;
-				if (game.player2.direction.x > 0) {
-					game.player2.bullet->acceleration.x = 1.5f;
+			else if (game.event.key.keysym.scancode == SDL_SCANCODE_RCTRL) {
+				if (game.player2.bullet->state == Bullet::STATE_UNFIRED) {
+					game.player2.bullet->state = Bullet::STATE_FIRED;
+					if (game.player2.direction.x > 0) {
+						game.player2.bullet->acceleration.x = 1.5f;
+					}
+					else {
+						game.player2.bullet->acceleration.x = -1.5f;
+					}
+
+					//Fire Sound
+					Mix_PlayChannel(-1, game.fire, 0);
 				}
 				else {
-					game.player2.bullet->acceleration.x = -1.5f;
+					//empty Sound
+					Mix_PlayChannel(-1, game.empty, 0);
 				}
 			}
 			else if (game.event.key.keysym.scancode == SDL_SCANCODE_UP) {
@@ -386,6 +442,10 @@ void Update(float elapsed) {
 		game.textMatrix = glm::mat4(1.0f);
 		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, 0.0f, 0.0f));
 		break;
+	case STATE_GAME_OVER:
+		game.textMatrix = glm::mat4(1.0f);
+		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, 0.0f, 0.0f));
+		break;
 	case STATE_GAME_LEVEL:
 		//Changes
 		/*
@@ -419,7 +479,10 @@ void Update(float elapsed) {
 			}
 		}
 		else if (game.map == 3) {
-
+			for (int i = 0; i < game.map3.size() - 1; i++) {
+				game.map3Matrix[i] = glm::mat4(1.0f);
+				game.map3Matrix[i] = glm::translate(game.map3Matrix[i], glm::vec3(game.map3[i].position.x, game.map3[i].position.y, 0.0f));
+			}
 		}
 		
 
@@ -484,6 +547,30 @@ void Update(float elapsed) {
 				game.player1.onFloor = false;
 			}
 		}
+		else if (game.map == 3) {
+			bool hasCollided = false;
+			for (int i = 0; i < game.map3.size() - 1; i++) {
+				if (game.player1.Collision(game.map3[i])) {
+					hasCollided = true;
+					float pen = (game.player1.position.y - game.map3[i].position.y) - (game.player1.height / 2) - (game.map3[i].height / 2); //penetration
+					if (game.player1.position.y + (game.player1.width / 2) >= game.map3[i].position.y + (game.map3[i].width / 2)) { //check if up or down collision
+						game.player1.position.y += fabs(pen);
+						game.player1.onFloor = true;
+						game.player1.state = Player::STATE_STANDING;
+						game.player1.velocity.y = 0.0f;
+					}
+					else {
+						game.player1.position.y -= fabs(pen);
+						game.player1.velocity.y = game.player1.velocity.y * -1.0f;
+					}
+				}
+			}
+
+			//make sure if touching nothing, to go to fall state
+			if (!hasCollided) {
+				game.player1.onFloor = false;
+			}
+		}
 
 		//horizontal movement
 		game.player1.velocity.x = lerp(game.player1.velocity.x, 0.0f, elapsed * game.player1.friction);
@@ -498,10 +585,17 @@ void Update(float elapsed) {
 					if (game.player1.position.x - (game.player1.width / 2) >= game.map1[i].position.x - (game.map1[i].width / 2)) {
 						game.player1.position.x += fabs(pen);
 						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
-					else {
-						game.player1.position.x -= fabs(pen);
-						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+					else if (game.player1.position.x + (game.player1.width / 2) <= game.map1[i].position.x + (game.map1[i].width / 2)) {
+						game.player1.position.x -= 0.02f;
+						game.player1.acceleration.x = 0.0f;
+						game.player1.velocity.x = -0.2f; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
 				}
 			}
@@ -513,10 +607,39 @@ void Update(float elapsed) {
 					if (game.player1.position.x - (game.player1.width / 2) >= game.map2[i].position.x - (game.map2[i].width / 2)) {
 						game.player1.position.x += fabs(pen);
 						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
-					else {
-						game.player1.position.x -= fabs(pen);
+					else if (game.player1.position.x + (game.player1.width / 2) <= game.map2[i].position.x + (game.map2[i].width / 2)) {
+						game.player1.position.x -= 0.02f;
+						game.player1.acceleration.x = 0.0f;
+						game.player1.velocity.x = -0.2f; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
+					}
+				}
+			}
+		}
+		else if (game.map == 3) {
+			for (int i = 0; i < game.map3.size() - 1; i++) {
+				if (game.player1.Collision(game.map3[i])) {
+					float pen = (game.player1.position.x - game.map3[i].position.x) - (game.player1.width / 2) - (game.map3[i].width / 2); //penetration
+					if (game.player1.position.x - (game.player1.width / 2) >= game.map3[i].position.x - (game.map3[i].width / 2)) {
+						game.player1.position.x += fabs(pen);
 						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
+					}
+					else if (game.player1.position.x + (game.player1.width / 2) <= game.map3[i].position.x + (game.map3[i].width / 2)) {
+						game.player1.position.x -= 0.02f;
+						game.player1.acceleration.x = 0.0f;
+						game.player1.velocity.x = -0.2f; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
 				}
 			}
@@ -560,14 +683,20 @@ void Update(float elapsed) {
 		if (game.player1.position.y <= -2.0f) {
 			if (game.map == 1) {
 				game.map1Winner = &game.player2;
+				mode = STATE_BETWEEN_MENU;
 			}
 			else if (game.map == 2) {
 				game.map2Winner = &game.player2;
+				mode = STATE_BETWEEN_MENU;
 			}
 			else if (game.map == 3) {
 				game.map3Winner = &game.player2;
+				mode = STATE_GAME_OVER;
 			}	
 			mode = STATE_BETWEEN_MENU;
+
+			//Die Sound
+			Mix_PlayChannel(-1, game.die, 0);
 		}
 			//check bullet condition
 		if (game.player1.bullet->state == Bullet::STATE_FIRED) {
@@ -578,10 +707,29 @@ void Update(float elapsed) {
 			}
 			else if (game.player1.bullet->EntityCollision(game.player2)) {
 				game.player1.bullet->state = Bullet::STATE_DESTROYED;
-				game.map1Winner = &game.player1;
-				mode = STATE_BETWEEN_MENU;
+
+				//Die Sound
+				Mix_PlayChannel(-1, game.die, 0);
+
+				if (game.map != 3) {
+					mode = STATE_BETWEEN_MENU;
+				}
+				else {
+					mode = STATE_GAME_OVER;
+				}
+				
 				game.player1.bullet->velocity.x = 0.0f;
 				game.player1.bullet->acceleration.x = 0.0f;
+
+				if (game.map == 1) {
+					game.map1Winner = &game.player1;
+				}
+				else if (game.map == 2) {
+					game.map2Winner = &game.player1;
+				}
+				else if (game.map == 3) {
+					game.map3Winner = &game.player1;
+				}
 			}
 		}
 
@@ -647,6 +795,30 @@ void Update(float elapsed) {
 				game.player2.onFloor = false;
 			}
 		}
+		else if (game.map == 3) {
+			bool hasCollided = false;
+			for (int i = 0; i < game.map3.size() - 1; i++) {
+				if (game.player2.Collision(game.map3[i])) {
+					hasCollided = true;
+					float pen = (game.player2.position.y - game.map3[i].position.y) - (game.player2.height / 2) - (game.map3[i].height / 2); //penetration
+					if (game.player2.position.y + (game.player2.width / 2) >= game.map3[i].position.y + (game.map3[i].width / 2)) { //check if up or down collision
+						game.player2.position.y += fabs(pen);
+						game.player2.onFloor = true;
+						game.player2.state = Player::STATE_STANDING;
+						game.player2.velocity.y = 0.0f;
+					}
+					else {
+						game.player2.position.y -= fabs(pen);
+						game.player2.velocity.y = game.player2.velocity.y * -1.0f;
+					}
+				}
+			}
+
+			//make sure if touching nothing, to go to fall state
+			if (!hasCollided) {
+				game.player2.onFloor = false;
+			}
+		}
 
 		//horizontal movement
 		game.player2.velocity.x = lerp(game.player2.velocity.x, 0.0f, elapsed * game.player2.friction);
@@ -661,10 +833,17 @@ void Update(float elapsed) {
 					if (game.player2.position.x - (game.player2.width / 2) >= game.map1[i].position.x - (game.map1[i].width / 2)) {
 						game.player2.position.x += fabs(pen);
 						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
-					else {
-						game.player2.position.x -= fabs(pen);
-						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+					else if (game.player2.position.x + (game.player2.width / 2) <= game.map1[i].position.x + (game.map1[i].width / 2)) {
+						game.player2.position.x -= 0.02f;
+						game.player2.acceleration.x = 0.0f;
+						game.player2.velocity.x = -0.2f; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
 				}
 			}
@@ -676,10 +855,36 @@ void Update(float elapsed) {
 					if (game.player2.position.x - (game.player2.width / 2) >= game.map2[i].position.x - (game.map2[i].width / 2)) {
 						game.player2.position.x += fabs(pen);
 						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
-					else {
-						game.player2.position.x -= fabs(pen);
+					else if (game.player2.position.x + (game.player2.width / 2) <= game.map2[i].position.x + (game.map2[i].width / 2)) {
+						game.player2.position.x -= 0.02f;
+						game.player2.acceleration.x = 0.0f;
+						game.player2.velocity.x = -0.2f; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
+					}
+				}
+			}
+		}
+		else if (game.map == 3) {
+			for (int i = 0; i < game.map3.size() - 1; i++) {
+				if (game.player2.Collision(game.map3[i])) {
+					float pen = (game.player2.position.x - game.map3[i].position.x) - (game.player2.width / 2) - (game.map3[i].width / 2); //penetration
+					if (game.player2.position.x - (game.player2.width / 2) >= game.map3[i].position.x - (game.map3[i].width / 2)) {
+						game.player2.position.x += fabs(pen);
 						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+					}
+					else if (game.player2.position.x + (game.player2.width / 2) <= game.map3[i].position.x + (game.map3[i].width / 2)) {
+						game.player2.position.x -= 0.02f;
+						game.player2.acceleration.x = 0.0f;
+						game.player2.velocity.x = -0.2f; //for bouncing off
+
+						//collision Sound
+						Mix_PlayChannel(-1, game.collision, 0);
 					}
 				}
 			}
@@ -723,14 +928,19 @@ void Update(float elapsed) {
 		if (game.player2.position.y <= -2.0f) {
 			if (game.map == 1) {
 				game.map1Winner = &game.player1;
+				mode = STATE_BETWEEN_MENU;
 			}
 			else if (game.map == 2) {
 				game.map2Winner = &game.player1;
+				mode = STATE_BETWEEN_MENU;
 			}
 			else if (game.map == 3) {
 				game.map3Winner = &game.player1;
+				mode = STATE_GAME_OVER;
 			}
-			mode = STATE_BETWEEN_MENU;
+
+			//Die Sound
+			Mix_PlayChannel(-1, game.die, 0);
 		}
 		//check bullet condition
 		if (game.player2.bullet->state == Bullet::STATE_FIRED) {
@@ -741,10 +951,28 @@ void Update(float elapsed) {
 			}
 			else if (game.player2.bullet->EntityCollision(game.player1)) {
 				game.player2.bullet->state = Bullet::STATE_DESTROYED;
-				game.map1Winner = &game.player2;
-				mode = STATE_BETWEEN_MENU;
+
+				//Die Sound
+				Mix_PlayChannel(-1, game.die, 0);
+
+				if (game.map != 3) {
+					mode = STATE_BETWEEN_MENU;
+				}
+				else {
+					mode = STATE_GAME_OVER;
+				}
 				game.player2.bullet->velocity.x = 0.0f;
 				game.player2.bullet->acceleration.x = 0.0f;
+
+				if (game.map == 1) {
+					game.map1Winner = &game.player2;
+				}
+				else if (game.map == 2) {
+					game.map2Winner = &game.player2;
+				}
+				else if (game.map == 3) {
+					game.map3Winner = &game.player2;
+				}
 			}
 		}
 
@@ -770,7 +998,13 @@ void Update(float elapsed) {
 				game.map2Matrix[5] = glm::translate(game.map2Matrix[5], glm::vec3(game.map2[5].position.x, game.map2[5].position.y, 0.0f));
 			}
 			else if (game.map == 3) {
+				game.map3Matrix[game.map3.size() - 1] = glm::mat4(1.0f);
+				float rng_x = distribution(generator) / 10.0f;
+				float rng_y = distribution(generator) / 1000.0f;
+				game.map3[game.map3Matrix.size() - 1].position.x += rng_x;
+				game.map3[game.map3Matrix.size() - 1].position.y += rng_y;
 
+				game.map3Matrix[game.map3.size() - 1] = glm::translate(game.map3Matrix[game.map3.size() - 1], glm::vec3(game.map3[game.map3Matrix.size() - 1].position.x, game.map3[game.map3Matrix.size() - 1].position.y, 0.0f));
 			}
 			
 			game.ammoDisplay = true;
@@ -782,25 +1016,53 @@ void Update(float elapsed) {
 				if (game.player1.Collision(game.map1[9])) {
 					game.player1.bullet->state = Bullet::STATE_UNFIRED;
 					game.ammoDisplay = false;
+
+					//reload Sound
+					Mix_PlayChannel(-1, game.reload, 0);
 				}
 				//if they both reach the box at the same time, they can both get a bullet
 				if (game.player2.Collision(game.map1[9])) {
 					game.player2.bullet->state = Bullet::STATE_UNFIRED;
 					game.ammoDisplay = false;
+
+					//reload Sound
+					Mix_PlayChannel(-1, game.reload, 0);
 				}
 			}
 			else if (game.map == 2) {
-				if (game.player1.Collision(game.map2[5])) {
+				if (game.player1.Collision(game.map3[game.map3Matrix.size() - 1])) {
 					game.player1.bullet->state = Bullet::STATE_UNFIRED;
 					game.ammoDisplay = false;
+
+					//reload Sound
+					Mix_PlayChannel(-1, game.reload, 0);
 				}
 				//if they both reach the box at the same time, they can both get a bullet
-				if (game.player2.Collision(game.map2[5])) {
+				if (game.player2.Collision(game.map3[game.map3Matrix.size() - 1])) {
 					game.player2.bullet->state = Bullet::STATE_UNFIRED;
 					game.ammoDisplay = false;
+
+					//reload Sound
+					Mix_PlayChannel(-1, game.reload, 0);
 				}
 			}
+			else if (game.map == 3) {
+				if (game.player1.Collision(game.map3[game.map3Matrix.size() - 1])) {
+					game.player1.bullet->state = Bullet::STATE_UNFIRED;
+					game.ammoDisplay = false;
 
+					//reload Sound
+					Mix_PlayChannel(-1, game.reload, 0);
+				}
+				//if they both reach the box at the same time, they can both get a bullet
+				if (game.player2.Collision(game.map3[game.map3Matrix.size() - 1])) {
+					game.player2.bullet->state = Bullet::STATE_UNFIRED;
+					game.ammoDisplay = false;
+
+					//reload Sound
+					Mix_PlayChannel(-1, game.reload, 0);
+				}
+			}
 		}
 		break;
 	}
@@ -822,6 +1084,51 @@ void Render() {
 		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, -0.4f, 0.0f));
 		game.program.SetModelMatrix(game.textMatrix);
 		DrawText(game.program, game.font, "Press Any Key To Continue and P to Quit", 0.05f, 0.0f);
+
+		break;
+	case STATE_GAME_OVER: 
+		//Set matrices
+		game.program.SetProjectionMatrix(game.projectionMatrix);
+		game.program.SetViewMatrix(game.viewMatrix);
+		game.program.SetModelMatrix(game.textMatrix);
+		
+		if (game.map1Winner == &game.player1) {
+			p1Counter += 1;
+		}
+		else {
+			p2Counter++;
+		}
+		if (game.map2Winner == &game.player1) {
+			p1Counter++;
+		}
+		else {
+			p2Counter++;
+		}
+		if (game.map3Winner == &game.player1) {
+			p1Counter++;
+		}
+		else {
+			p2Counter++;
+		}
+
+		//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
+		if (p1Counter > p2Counter) {
+			//Screen Color
+			glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			DrawText(game.program, game.font, "Blue Wins The Game!", 0.08f, 0.0f);
+
+		}
+		else {
+			//Screen Color
+			glClearColor(0.2f, 0.8f, 0.2f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			DrawText(game.program, game.font, "Green Wins The Game!", 0.08f, 0.0f);
+		}
+
+		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, -0.4f, 0.0f));
+		game.program.SetModelMatrix(game.textMatrix);
+		DrawText(game.program, game.font, "Press Any Key To Quit", 0.05f, 0.0f);
 
 		break;
 	case STATE_BETWEEN_MENU:
@@ -874,6 +1181,10 @@ void Render() {
 			DrawText(game.program, game.font, "Green wins round 3", 0.08f, 0.0f);
 		}
 
+		if (game.map > 3) {
+			mode = STATE_GAME_OVER;
+		}
+
 		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, -0.4f, 0.0f));
 		game.program.SetModelMatrix(game.textMatrix);
 		DrawText(game.program, game.font, "Press Any Key To Continue", 0.05f, 0.0f);
@@ -902,6 +1213,12 @@ void Render() {
 				game.map2[i].sprite.Draw(game.program);
 			}
 		}
+		else if (game.map == 3) { //map 2
+			for (int i = 0; i < game.map3.size() - 1; i++) {
+				game.program.SetModelMatrix(game.map3Matrix[i]);
+				game.map3[i].sprite.Draw(game.program);
+			}
+		}
 
 		//ammobox
 		if (game.ammoDisplay) {
@@ -912,6 +1229,10 @@ void Render() {
 			else if (game.map == 2) {
 				game.program.SetModelMatrix(game.map2Matrix[5]);
 				game.map2[5].sprite.Draw(game.program);
+			}
+			else if (game.map == 3) {
+				game.program.SetModelMatrix(game.map3Matrix[game.map3.size() - 1]);
+				game.map3[game.map3.size() - 1].sprite.Draw(game.program);
 			}
 		}
 		
@@ -954,6 +1275,13 @@ void Render() {
 void Clean() {
 	//remove sounds, Mix_FreeChunk(game.jumpSound);
 	Mix_FreeChunk(game.jumpSound);
+	Mix_FreeChunk(game.die);
+	Mix_FreeChunk(game.collision);
+	Mix_FreeChunk(game.fire);
+	Mix_FreeChunk(game.reload);
+	Mix_FreeChunk(game.empty);
+
+	Mix_FreeMusic(game.music);
 
 	delete game.player1.bullet;
 	delete game.player2.bullet;
