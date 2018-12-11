@@ -1,4 +1,5 @@
 #include "Object.h"
+#include <cmath>
 
 Object::Object() {}
 
@@ -17,11 +18,9 @@ Player::Player(glm::vec3 pos, glm::vec3 direction, float w, float h, glm::vec2 v
 }
 
 //Collision for dynamic objects
-bool Player::EntityCollision(Object &object) {
-	if ((position.x - (width / 2)) <= object.position.x + (object.width / 2) && (position.x + (width / 2)) >= object.position.x - (object.width / 2)) {
-		if ((position.y - height / 2) <= (object.position.y + (object.height / 2)) && (position.y + height / 2) >= (object.position.y - (object.height / 2))) {
-			return true;
-		}
+bool Player::Collision(Object &object) {
+	if ((fabs(position.x - object.position.x) - ((width + object.width) / 2)) < 0 && (fabs(position.y - object.position.y) - ((height + object.height) / 2)) < 0) {
+		return true;
 	}
 	return false;
 }

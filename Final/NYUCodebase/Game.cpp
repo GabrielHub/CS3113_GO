@@ -20,4 +20,6 @@ GameState::GameState() {
 	glm::mat4 textMatrix = glm::mat4(1.0f);
 
 	map = 1;
+
+	ammoDisplay = false;
 }

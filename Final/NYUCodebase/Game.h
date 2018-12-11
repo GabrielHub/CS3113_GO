@@ -35,11 +35,17 @@ public:
 	glm::mat4 player1Matrix; //Model Matrices
 	glm::mat4 player2Matrix;
 	glm::mat4 textMatrix;
-	std::vector<glm::mat4> map1Matrix;
 	glm::mat4 bullet1Matrix;
 	glm::mat4 bullet2Matrix;
+	std::vector<glm::mat4> map1Matrix;
+	std::vector<glm::mat4> map2Matrix;
+	std::vector<glm::mat4> map3Matrix;
 
+	//map number
 	int map;
+
+	//if ammo box is displayed or not
+	bool ammoDisplay;
 
 	//Sound and music
 	Mix_Chunk *jumpSound;
@@ -52,6 +58,8 @@ public:
 	Player player1;
 	Player player2;
 	std::vector<Object> map1;
+	std::vector<Object> map2;
+	std::vector<Object> map3;
 
 	//win states
 	Player* map1Winner;

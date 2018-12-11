@@ -25,7 +25,6 @@
 #include "SheetSprite.h"
 #include <vector>
 #include <cmath>
-#include <iostream>
 #include <random>
 #include <SDL_mixer.h>
 
@@ -42,11 +41,7 @@
 	Both players have only one bullet. New bullets spawn only if both players have fired. Whoever wins 2 out of 3 maps wins.
 
 	TODO:
-	Generate a box to get a new bullet if both players have fired
-
-	If player falls off map, kill and go to next map
-
-	Build map 2 and 3 and change code for it
+	Build map 3 and check code for it
 	
 	Add game sounds and background music
 */
@@ -56,6 +51,9 @@ enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_BETWEEN_MENU, STATE_GAM
 GameState game;
 GameMode mode = STATE_MAIN_MENU;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
+
+//RNG
+static std::default_random_engine generator;
 
 //Function that converts strings to drawn text from sprite sheet
 void DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) {
@@ -222,11 +220,18 @@ void Setup(GameState &game) {
 	game.map1Matrix.push_back(glm::mat4(1.0f));
 
 	//create map2
+	for (int i = 0; i < 5; i++) {
+		//Map 2, build bottom row
+		game.map2.push_back(Object(glm::vec3(-1.5f + i * (0.6f), -1.0f, 0.0f), floorSprite.size * (floorSprite.width / floorSprite.height), floorSprite.size, floorSprite));
+		game.map2Matrix.push_back(glm::mat4(1.0f));
+	}
+	game.map2.push_back(Object(glm::vec3(0.0f, -0.35f, 0.0f), ammoSprite.size * (ammoSprite.width / ammoSprite.height), ammoSprite.size, ammoSprite)); //add Ammobox
+	game.map2Matrix.push_back(glm::mat4(1.0f));
 
 	//create map3
 
 	//create player1
-	game.player1 = Player(glm::vec3(0.0f), glm::vec3(1.0f), p1_standing.size * (p1_standing.width / p1_standing.height), p1_standing.size, glm::vec2(0.0f), glm::vec2(0.0f), 0.8f);
+	game.player1 = Player(glm::vec3(-0.3f, 0.0f, 0.0f), glm::vec3(1.0f), p1_standing.size * (p1_standing.width / p1_standing.height), p1_standing.size, glm::vec2(0.0f), glm::vec2(0.0f), 0.8f);
 	game.player1.standingSprite = p1_standing;
 	game.player1.jumpSprite = p1_jumping;
 	game.player1.walk1Sprite = p1_walk1;
@@ -235,16 +240,13 @@ void Setup(GameState &game) {
 	game.player1.bullet = new Bullet(glm::vec3(0.0f), bullet1Sprite.size * bullet1Sprite.width / bullet1Sprite.height, bullet1Sprite.size, glm::vec2(0.0f), glm::vec2(0.0f), bullet1Sprite); //create initial bullet
 
 	//create player2
-	game.player2 = Player(glm::vec3(0.0f), glm::vec3(1.0f), p2_standing.size * (p2_standing.width / p2_standing.height), p2_standing.size, glm::vec2(0.0f), glm::vec2(0.0f), 0.8f);
+	game.player2 = Player(glm::vec3(0.3f, 0.0f, 0.0f), glm::vec3(1.0f), p2_standing.size * (p2_standing.width / p2_standing.height), p2_standing.size, glm::vec2(0.0f), glm::vec2(0.0f), 0.8f);
 	game.player2.standingSprite = p2_standing;
 	game.player2.jumpSprite = p2_jumping;
 	game.player2.walk1Sprite = p2_walk1;
 	game.player2.walk2Sprite = p2_walk2;
 	game.player2.currentSprite = &game.player2.standingSprite;
 	game.player2.bullet = new Bullet(glm::vec3(0.0f), bullet2Sprite.size * bullet2Sprite.width / bullet2Sprite.height, bullet2Sprite.size, glm::vec2(0.0f), glm::vec2(0.0f), bullet2Sprite); //create initial bullet
-
-	//random number gen
-	srand(static_cast <unsigned> (time(0)));
 }
 
 //Process inputs
@@ -259,7 +261,31 @@ void Event() {
 			}
 			else if (mode == STATE_BETWEEN_MENU) {
 				mode = STATE_GAME_LEVEL;
-				game.map++;
+				if (game.map == 4) {
+					mode = STATE_GAME_OVER;
+				}
+				game.map++; //go to next map
+
+				//reset players and stuff
+				game.player1.acceleration = glm::vec2(0.0f);
+				game.player1.velocity = glm::vec2(0.0f);
+				game.player1.position = glm::vec3(0.0f);
+				game.player1.bullet->state = Bullet::STATE_UNFIRED;
+				game.player1.onFloor = false;
+
+				game.player2.acceleration = glm::vec2(0.0f);
+				game.player2.velocity = glm::vec2(0.0f);
+				game.player2.position = glm::vec3(0.0f);
+				game.player2.bullet->state = Bullet::STATE_UNFIRED;
+				game.player2.onFloor = false;
+
+				game.ammoDisplay = false;
+
+				if (game.map == 2) {
+					game.player1.position = glm::vec3(1.0f, 0.0f, 0.0f);
+					game.player2.position = glm::vec3(-0.8f, 0.0f, 0.0f);
+
+				}
 			}
 			else if (game.event.key.keysym.scancode == SDL_SCANCODE_W) {
 				if (game.player1.state != Player::STATE_JUMPING) {
@@ -387,7 +413,10 @@ void Update(float elapsed) {
 			}
 		}
 		else if (game.map == 2) {
-
+			for (int i = 0; i < 5; i++) {
+				game.map2Matrix[i] = glm::mat4(1.0f);
+				game.map2Matrix[i] = glm::translate(game.map2Matrix[i], glm::vec3(game.map2[i].position.x, game.map2[i].position.y, 0.0f));
+			}
 		}
 		else if (game.map == 3) {
 
@@ -395,45 +424,104 @@ void Update(float elapsed) {
 		
 
 		//Player 1
-			//Check if player is touching the ground and do gravity on player
-		if (!game.player1.onFloor) {
-			bool collision = false;
-			for (int i = 0; i < 9; i++) {
-				if (game.player1.EntityCollision(game.map1[i])) {
-					collision = true;
-					game.player1.velocity.y = 0.0f;
-					game.player1.onFloor = true;
-					game.player1.state = Player::STATE_STANDING;
-				}
-			}
-			if (!collision) {
-				game.player1.onFloor = false;
-				game.player1.velocity.y += game.gravity * elapsed; // gravity
-				game.player1.state = Player::STATE_JUMPING;
-			}
+			//apply gravity
+		if (game.player1.onFloor == false) {
+			game.player1.velocity.y += game.gravity * elapsed; // gravity
+			game.player1.state = Player::STATE_JUMPING;
 		}
-		else {
-			//check if player has run off floor
-			bool fallenOff = true;
-			for (int i = 0; i < 9; i++) {
-				if (game.player1.EntityCollision(game.map1[i])) {
-					fallenOff = false;
-					game.player1.velocity.y = 0.0f;
-					game.player1.onFloor = true;
-				}
-			}
-			if (fallenOff) {
-				game.player1.onFloor = false;
-				game.player1.state = Player::STATE_JUMPING;
-			}
-		}
-			//player1 movement
+
+			//player1 movement and then collision
 		game.player1Matrix = glm::mat4(1.0f);
-		game.player1.velocity.x = lerp(game.player1.velocity.x, 0.0f, elapsed * game.player1.friction);
 		game.player1.velocity.y = lerp(game.player1.velocity.y, 0.0f, elapsed * -game.gravity);
+		game.player1.velocity.y += game.player1.acceleration.y * elapsed;
+		game.player1.position.y += game.player1.velocity.y * elapsed;
+
+			//check collision with vertical objects
+		if (game.map == 1) {
+			bool hasCollided = false; 
+			for (int i = 0; i < 9; i++) {
+				if (game.player1.Collision(game.map1[i])) {
+					hasCollided = true;
+					float pen = (game.player1.position.y - game.map1[i].position.y) - (game.player1.height / 2) - (game.map1[i].height / 2); //penetration
+					if (game.player1.position.y + (game.player1.width / 2) >= game.map1[i].position.y + (game.map1[i].width / 2)) { //check if up or down collision
+						game.player1.position.y += fabs(pen);
+						game.player1.onFloor = true;
+						game.player1.state = Player::STATE_STANDING;
+						game.player1.velocity.y = 0.0f;
+					}
+					else {
+						game.player1.position.y -= fabs(pen);
+						game.player1.velocity.y = game.player1.velocity.y * -1.0f;
+					}
+				}
+			}
+			//make sure if touching nothing, to go to fall state
+			if (!hasCollided) {
+				game.player1.onFloor = false;
+			}
+		}
+		else if (game.map == 2) {
+			bool hasCollided = false;
+			for (int i = 0; i < 5; i++) {
+				if (game.player1.Collision(game.map2[i])) {
+					hasCollided = true;
+					float pen = (game.player1.position.y - game.map2[i].position.y) - (game.player1.height / 2) - (game.map2[i].height / 2); //penetration
+					if (game.player1.position.y + (game.player1.width / 2) >= game.map2[i].position.y + (game.map2[i].width / 2)) { //check if up or down collision
+						game.player1.position.y += fabs(pen);
+						game.player1.onFloor = true;
+						game.player1.state = Player::STATE_STANDING;
+						game.player1.velocity.y = 0.0f;
+					}
+					else {
+						game.player1.position.y -= fabs(pen);
+						game.player1.velocity.y = game.player1.velocity.y * -1.0f;
+					}
+				}
+			}
+
+			//make sure if touching nothing, to go to fall state
+			if (!hasCollided) {
+				game.player1.onFloor = false;
+			}
+		}
+
+		//horizontal movement
+		game.player1.velocity.x = lerp(game.player1.velocity.x, 0.0f, elapsed * game.player1.friction);
 		game.player1.velocity.x += game.player1.acceleration.x * elapsed;
 		game.player1.position.x += game.player1.velocity.x * elapsed;
-		game.player1.position.y += game.player1.velocity.y * elapsed;
+
+		//check collision with horz objects
+		if (game.map == 1) {
+			for (int i = 0; i < 9; i++) {
+				if (game.player1.Collision(game.map1[i])) {
+					float pen = (game.player1.position.x - game.map1[i].position.x) - (game.player1.width / 2) - (game.map1[i].width / 2); //penetration
+					if (game.player1.position.x - (game.player1.width / 2) >= game.map1[i].position.x - (game.map1[i].width / 2)) {
+						game.player1.position.x += fabs(pen);
+						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+					}
+					else {
+						game.player1.position.x -= fabs(pen);
+						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+					}
+				}
+			}
+		}
+		else if (game.map == 2) {
+			for (int i = 0; i < 5; i++) {
+				if (game.player1.Collision(game.map2[i])) {
+					float pen = (game.player1.position.x - game.map2[i].position.x) - (game.player1.width / 2) - (game.map2[i].width / 2); //penetration
+					if (game.player1.position.x - (game.player1.width / 2) >= game.map2[i].position.x - (game.map2[i].width / 2)) {
+						game.player1.position.x += fabs(pen);
+						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+					}
+					else {
+						game.player1.position.x -= fabs(pen);
+						game.player1.velocity.x = -1.0f * game.player1.velocity.x; //for bouncing off
+					}
+				}
+			}
+		}
+
 		game.player1Matrix = glm::translate(game.player1Matrix, glm::vec3(game.player1.position.x, game.player1.position.y, 0.0f));
 		
 			//player 1 animation
@@ -467,61 +555,139 @@ void Update(float elapsed) {
 		}
 		game.bullet1Matrix = glm::translate(game.bullet1Matrix, glm::vec3(game.player1.bullet->position.x, game.player1.bullet->position.y, 0.0f));
 
-			//bullet collision
+		//check win conditions
+			//check if falling off the map
+		if (game.player1.position.y <= -2.0f) {
+			if (game.map == 1) {
+				game.map1Winner = &game.player2;
+			}
+			else if (game.map == 2) {
+				game.map2Winner = &game.player2;
+			}
+			else if (game.map == 3) {
+				game.map3Winner = &game.player2;
+			}	
+			mode = STATE_BETWEEN_MENU;
+		}
+			//check bullet condition
 		if (game.player1.bullet->state == Bullet::STATE_FIRED) {
 			if (game.player1.bullet->position.x > 2.0f || game.player1.bullet->position.x < -2.0f) {
 				game.player1.bullet->state = Bullet::STATE_DESTROYED;
+				game.player1.bullet->velocity.x = 0.0f;
+				game.player1.bullet->acceleration.x = 0.0f;
 			}
 			else if (game.player1.bullet->EntityCollision(game.player2)) {
 				game.player1.bullet->state = Bullet::STATE_DESTROYED;
 				game.map1Winner = &game.player1;
 				mode = STATE_BETWEEN_MENU;
+				game.player1.bullet->velocity.x = 0.0f;
+				game.player1.bullet->acceleration.x = 0.0f;
 			}
 		}
 
 		//Player 2
-			//Check if player is touching the ground and do gravity on player
-		if (!game.player2.onFloor) {
-			bool collision = false;
-			for (int i = 0; i < 9; i++) {
-				if (game.player2.EntityCollision(game.map1[i])) {
-					collision = true;
-					game.player2.velocity.y = 0.0f;
-					game.player2.onFloor = true;
-					game.player2.state = Player::STATE_STANDING;
-				}
-			}
-			if (!collision) {
-				game.player2.onFloor = false;
-				game.player2.velocity.y += game.gravity * elapsed; // gravity
-				game.player2.state = Player::STATE_JUMPING;
-			}
+					//apply gravity
+		if (game.player2.onFloor == false) {
+			game.player2.velocity.y += game.gravity * elapsed; // gravity
+			game.player2.state = Player::STATE_JUMPING;
 		}
-		else {
-			//check if player has run off floor
-			bool fallenOff = true;
-			for (int i = 0; i < 9; i++) {
-				if (game.player2.EntityCollision(game.map1[i])) {
-					fallenOff = false;
-					game.player2.velocity.y = 0.0f;
-					game.player2.onFloor = true;
-				}
-			}
-			if (fallenOff) {
-				game.player2.onFloor = false;
-				game.player2.state = Player::STATE_JUMPING;
-			}
-		}
-		//player1 movement
+
+		//player2 movement and then collision
 		game.player2Matrix = glm::mat4(1.0f);
-		game.player2.velocity.x = lerp(game.player2.velocity.x, 0.0f, elapsed * game.player2.friction);
 		game.player2.velocity.y = lerp(game.player2.velocity.y, 0.0f, elapsed * -game.gravity);
+		game.player2.velocity.y += game.player2.acceleration.y * elapsed;
+		game.player2.position.y += game.player2.velocity.y * elapsed;
+
+		//check collision with vertical objects
+		if (game.map == 1) {
+			bool hasCollided = false;
+			for (int i = 0; i < 9; i++) {
+				if (game.player2.Collision(game.map1[i])) {
+					hasCollided = true;
+					float pen = (game.player2.position.y - game.map1[i].position.y) - (game.player2.height / 2) - (game.map1[i].height / 2); //penetration
+					if (game.player2.position.y + (game.player2.width / 2) >= game.map1[i].position.y + (game.map1[i].width / 2)) { //check if up or down collision
+						game.player2.position.y += fabs(pen);
+						game.player2.onFloor = true;
+						game.player2.state = Player::STATE_STANDING;
+						game.player2.velocity.y = 0.0f;
+					}
+					else {
+						game.player2.position.y -= fabs(pen);
+						game.player2.velocity.y = game.player2.velocity.y * -1.0f;
+					}
+				}
+			}
+
+			//make sure if touching nothing, to go to fall state
+			if (!hasCollided) {
+				game.player2.onFloor = false;
+			}
+		}
+		else if (game.map == 2) {
+			bool hasCollided = false;
+			for (int i = 0; i < 5; i++) {
+				if (game.player2.Collision(game.map2[i])) {
+					hasCollided = true;
+					float pen = (game.player2.position.y - game.map2[i].position.y) - (game.player2.height / 2) - (game.map2[i].height / 2); //penetration
+					if (game.player2.position.y + (game.player2.width / 2) >= game.map2[i].position.y + (game.map2[i].width / 2)) { //check if up or down collision
+						game.player2.position.y += fabs(pen);
+						game.player2.onFloor = true;
+						game.player2.state = Player::STATE_STANDING;
+						game.player2.velocity.y = 0.0f;
+					}
+					else {
+						game.player2.position.y -= fabs(pen);
+						game.player2.velocity.y = game.player2.velocity.y * -1.0f;
+					}
+				}
+			}
+
+			//make sure if touching nothing, to go to fall state
+			if (!hasCollided) {
+				game.player2.onFloor = false;
+			}
+		}
+
+		//horizontal movement
+		game.player2.velocity.x = lerp(game.player2.velocity.x, 0.0f, elapsed * game.player2.friction);
 		game.player2.velocity.x += game.player2.acceleration.x * elapsed;
 		game.player2.position.x += game.player2.velocity.x * elapsed;
-		game.player2.position.y += game.player2.velocity.y * elapsed;
+
+		//check collision with horz objects
+		if (game.map == 1) {
+			for (int i = 0; i < 9; i++) {
+				if (game.player2.Collision(game.map1[i])) {
+					float pen = (game.player2.position.x - game.map1[i].position.x) - (game.player2.width / 2) - (game.map1[i].width / 2); //penetration
+					if (game.player2.position.x - (game.player2.width / 2) >= game.map1[i].position.x - (game.map1[i].width / 2)) {
+						game.player2.position.x += fabs(pen);
+						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+					}
+					else {
+						game.player2.position.x -= fabs(pen);
+						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+					}
+				}
+			}
+		}
+		else if (game.map == 2) {
+			for (int i = 0; i < 5; i++) {
+				if (game.player2.Collision(game.map2[i])) {
+					float pen = (game.player2.position.x - game.map2[i].position.x) - (game.player2.width / 2) - (game.map2[i].width / 2); //penetration
+					if (game.player2.position.x - (game.player2.width / 2) >= game.map2[i].position.x - (game.map2[i].width / 2)) {
+						game.player2.position.x += fabs(pen);
+						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+					}
+					else {
+						game.player2.position.x -= fabs(pen);
+						game.player2.velocity.x = -1.0f * game.player2.velocity.x; //for bouncing off
+					}
+				}
+			}
+		}
+
 		game.player2Matrix = glm::translate(game.player2Matrix, glm::vec3(game.player2.position.x, game.player2.position.y, 0.0f));
 
-		//player 1 animation
+		//player2 animation
 		if (game.player2.state == Player::STATE_STANDING) {
 			game.player2.currentSprite = &game.player2.standingSprite;
 		}
@@ -543,7 +709,7 @@ void Update(float elapsed) {
 		//flip player depending on direction
 		game.player2Matrix = glm::scale(game.player2Matrix, glm::vec3(game.player2.direction.x, 1.0f, 0.0f));
 
-		//player1 bullet movement
+		//player2 bullet movement
 		game.bullet2Matrix = glm::mat4(1.0f);
 		game.player2.bullet->velocity.x += game.player2.bullet->acceleration.x * elapsed;
 		game.player2.bullet->position.x += game.player2.bullet->velocity.x * elapsed;
@@ -552,23 +718,89 @@ void Update(float elapsed) {
 		}
 		game.bullet2Matrix = glm::translate(game.bullet2Matrix, glm::vec3(game.player2.bullet->position.x, game.player2.bullet->position.y, 0.0f));
 
-		//bullet collision
+		//check win conditions
+			//check if falling off the map
+		if (game.player2.position.y <= -2.0f) {
+			if (game.map == 1) {
+				game.map1Winner = &game.player1;
+			}
+			else if (game.map == 2) {
+				game.map2Winner = &game.player1;
+			}
+			else if (game.map == 3) {
+				game.map3Winner = &game.player1;
+			}
+			mode = STATE_BETWEEN_MENU;
+		}
+		//check bullet condition
 		if (game.player2.bullet->state == Bullet::STATE_FIRED) {
 			if (game.player2.bullet->position.x > 2.0f || game.player2.bullet->position.x < -2.0f) {
 				game.player2.bullet->state = Bullet::STATE_DESTROYED;
+				game.player2.bullet->velocity.x = 0.0f;
+				game.player2.bullet->acceleration.x = 0.0f;
 			}
 			else if (game.player2.bullet->EntityCollision(game.player1)) {
 				game.player2.bullet->state = Bullet::STATE_DESTROYED;
 				game.map1Winner = &game.player2;
 				mode = STATE_BETWEEN_MENU;
+				game.player2.bullet->velocity.x = 0.0f;
+				game.player2.bullet->acceleration.x = 0.0f;
 			}
 		}
 
 		//Ammobox
-		if (game.player1.bullet->state == Bullet::STATE_DESTROYED && game.player2.bullet->state == Bullet::STATE_DESTROYED) {
-			game.map1Matrix[9] = glm::mat4(1.0f);
-			float rand = static_cast <float> (-0.5f) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (0.5f - (-0.5f))));
-			game.map1Matrix[9] = glm::translate(game.map1Matrix[9], glm::vec3(game.map1[9].position.x, game.map1[9].position.y, 0.0f));
+		std::uniform_int_distribution<int> distribution(-5, 5); // create interval for rng for random ammo placement
+		if (game.player1.bullet->state == Bullet::STATE_DESTROYED && game.player2.bullet->state == Bullet::STATE_DESTROYED && !game.ammoDisplay) {
+			if (game.map == 1) {
+				game.map1Matrix[9] = glm::mat4(1.0f);
+				float rng_x = distribution(generator) / 10.0f;
+				float rng_y = distribution(generator) / 100.0f;
+				game.map1[9].position.x += rng_x;
+				game.map1[9].position.y += rng_y;
+
+				game.map1Matrix[9] = glm::translate(game.map1Matrix[9], glm::vec3(game.map1[9].position.x, game.map1[9].position.y, 0.0f));
+			}
+			else if (game.map == 2) {
+				game.map2Matrix[5] = glm::mat4(1.0f);
+				float rng_x = distribution(generator) / 10.0f;
+				float rng_y = distribution(generator) / 1000.0f;
+				game.map2[5].position.x += rng_x;
+				game.map2[5].position.y += rng_y;
+
+				game.map2Matrix[5] = glm::translate(game.map2Matrix[5], glm::vec3(game.map2[5].position.x, game.map2[5].position.y, 0.0f));
+			}
+			else if (game.map == 3) {
+
+			}
+			
+			game.ammoDisplay = true;
+		}
+
+			//Check if ammobox is being displayed. if so, collision with players
+		if (game.ammoDisplay) {
+			if (game.map == 1) {
+				if (game.player1.Collision(game.map1[9])) {
+					game.player1.bullet->state = Bullet::STATE_UNFIRED;
+					game.ammoDisplay = false;
+				}
+				//if they both reach the box at the same time, they can both get a bullet
+				if (game.player2.Collision(game.map1[9])) {
+					game.player2.bullet->state = Bullet::STATE_UNFIRED;
+					game.ammoDisplay = false;
+				}
+			}
+			else if (game.map == 2) {
+				if (game.player1.Collision(game.map2[5])) {
+					game.player1.bullet->state = Bullet::STATE_UNFIRED;
+					game.ammoDisplay = false;
+				}
+				//if they both reach the box at the same time, they can both get a bullet
+				if (game.player2.Collision(game.map2[5])) {
+					game.player2.bullet->state = Bullet::STATE_UNFIRED;
+					game.ammoDisplay = false;
+				}
+			}
+
 		}
 		break;
 	}
@@ -596,23 +828,50 @@ void Render() {
 		//Set matrices
 		game.program.SetProjectionMatrix(game.projectionMatrix);
 		game.program.SetViewMatrix(game.viewMatrix);
-
 		game.program.SetModelMatrix(game.textMatrix);
 
 		//DrawText(ShaderProgram &program, int fontTexture, std::string text, float size, float spacing) to draw font
-		if (game.map1Winner == &game.player1) {
+		if (game.map1Winner == &game.player1 && game.map == 1) {
 			//Screen Color
 			glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			DrawText(game.program, game.font, "Blue wins round 1", 0.08f, 0.0f);
 		}
-		else {
+		else if (game.map1Winner == &game.player2 && game.map == 1) {
 			//Screen Color
 			glClearColor(0.2f, 0.8f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			DrawText(game.program, game.font, "Green wins round 1", 0.08f, 0.0f);
+		}
+		else if (game.map2Winner == &game.player1 && game.map == 2) {
+			//Screen Color
+			glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			DrawText(game.program, game.font, "Blue wins round 2", 0.08f, 0.0f);
+		}
+		else if (game.map2Winner == &game.player2 && game.map == 2) {
+			//Screen Color
+			glClearColor(0.2f, 0.8f, 0.2f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			DrawText(game.program, game.font, "Green wins round 2", 0.08f, 0.0f);
+		}
+		else if (game.map3Winner == &game.player1 && game.map == 3) {
+			//Screen Color
+			glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			DrawText(game.program, game.font, "Blue wins round 3", 0.08f, 0.0f);
+		}
+		else if (game.map3Winner == &game.player2 && game.map == 3) {
+			//Screen Color
+			glClearColor(0.2f, 0.8f, 0.2f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			DrawText(game.program, game.font, "Green wins round 3", 0.08f, 0.0f);
 		}
 
 		game.textMatrix = glm::translate(game.textMatrix, glm::vec3(-0.5f, -0.4f, 0.0f));
@@ -627,13 +886,34 @@ void Render() {
 		//Set matrices
 		game.program.SetProjectionMatrix(game.projectionMatrix);
 		game.program.SetViewMatrix(game.viewMatrix);
-		game.program.SetModelMatrix(game.player1Matrix);
 
 		//Draw Objects, using spritesheet object example.draw(program)
-		for (int i = 0; i < game.map1.size(); i++) {
-			game.program.SetModelMatrix(game.map1Matrix[i]);
-			game.map1[i].sprite.Draw(game.program);
-		} // draw map objects
+
+		//map 1
+		if (game.map == 1) {
+			for (int i = 0; i < 9; i++) {
+				game.program.SetModelMatrix(game.map1Matrix[i]);
+				game.map1[i].sprite.Draw(game.program);
+			}
+		}
+		else if (game.map == 2) { //map 2
+			for (int i = 0; i < 5; i++) {
+				game.program.SetModelMatrix(game.map2Matrix[i]);
+				game.map2[i].sprite.Draw(game.program);
+			}
+		}
+
+		//ammobox
+		if (game.ammoDisplay) {
+			if (game.map == 1) { //map 1 ammo
+				game.program.SetModelMatrix(game.map1Matrix[9]);
+				game.map1[9].sprite.Draw(game.program);
+			}
+			else if (game.map == 2) {
+				game.program.SetModelMatrix(game.map2Matrix[5]);
+				game.map2[5].sprite.Draw(game.program);
+			}
+		}
 		
 
 		//Player1

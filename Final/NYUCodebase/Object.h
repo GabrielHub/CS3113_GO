@@ -21,8 +21,6 @@ public:
 
 	//textures
 	SheetSprite sprite;
-
-	
 };
 
 class Bullet : public Object {
@@ -48,7 +46,7 @@ public:
 
 	Player(glm::vec3 position, glm::vec3 direction, float width, float height, glm::vec2 velocity, glm::vec2 acceleration, float friction);
 
-	bool EntityCollision(Object &object);
+	bool Collision(Object &object);
 
 	glm::vec3 direction;
 
