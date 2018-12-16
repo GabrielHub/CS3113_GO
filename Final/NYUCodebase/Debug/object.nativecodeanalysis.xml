@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>4</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Object::position' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Object::{ctor}</FUNCTION>
+    <DECORATED>??0Object@@QAE@XZ</DECORATED>
+    <FUNCLINE>4</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>4</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Object::height' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Object::{ctor}</FUNCTION>
+    <DECORATED>??0Object@@QAE@XZ</DECORATED>
+    <FUNCLINE>4</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>4</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Object::width' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Object::{ctor}</FUNCTION>
+    <DECORATED>??0Object@@QAE@XZ</DECORATED>
+    <FUNCLINE>4</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::direction' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::state' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::currentSprite' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::currentIndex' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::velocity' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::acceleration' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::friction' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::onFloor' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::bullet' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>11</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::currentSprite' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@U?$vec@$02M$0A@@glm@@0MMU?$vec@$01M$0A@@2@1M@Z</DECORATED>
+    <FUNCLINE>11</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>11</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::bullet' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@U?$vec@$02M$0A@@glm@@0MMU?$vec@$01M$0A@@2@1M@Z</DECORATED>
+    <FUNCLINE>11</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>28</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Bullet::state' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Bullet::{ctor}</FUNCTION>
+    <DECORATED>??0Bullet@@QAE@XZ</DECORATED>
+    <FUNCLINE>28</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>28</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Bullet::acceleration' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Bullet::{ctor}</FUNCTION>
+    <DECORATED>??0Bullet@@QAE@XZ</DECORATED>
+    <FUNCLINE>28</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>28</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Bullet::velocity' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Bullet::{ctor}</FUNCTION>
+    <DECORATED>??0Bullet@@QAE@XZ</DECORATED>
+    <FUNCLINE>28</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

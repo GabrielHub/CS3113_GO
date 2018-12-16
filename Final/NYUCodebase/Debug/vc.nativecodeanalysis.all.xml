@@ -1,0 +1,690 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>game.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'GameState::displayWindow' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>GameState::{ctor}</FUNCTION>
+    <DECORATED>??0GameState@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>1580</LINE>
+      <COLUMN>32</COLUMN>
+    </SFA>
+    <DEFECTCODE>26453</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Left shift of a negative signed number is undefined behavior (io.4).</DESCRIPTION>
+    <FUNCTION>stbi__build_fast_ac</FUNCTION>
+    <DECORATED>?stbi__build_fast_ac@@YAXPAFPAUstbi__huffman@@@Z</DECORATED>
+    <FUNCLINE>1564</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>3412</LINE>
+      <COLUMN>20</COLUMN>
+    </SFA>
+    <DEFECTCODE>6001</DEFECTCODE>
+    <DESCRIPTION>Using uninitialized memory 'coutput'.</DESCRIPTION>
+    <FUNCTION>load_jpeg_image</FUNCTION>
+    <DECORATED>?load_jpeg_image@@YAPAEPAUstbi__jpeg@@PAH11H@Z</DECORATED>
+    <FUNCLINE>3320</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3322</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3322</LINE>
+        <COLUMN>10</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3323</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3326</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3329</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3332</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3334</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3337</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3341</LINE>
+        <COLUMN>10</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3342</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3342</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3343</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3344</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'coutput' is not initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3346</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3348</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3348</LINE>
+        <COLUMN>18</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this loop, (assume 'k&lt;decode_n' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3371</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3372</LINE>
+        <COLUMN>10</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '!output' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3375</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3375</LINE>
+        <COLUMN>18</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'j&lt;z-&gt;s-&gt;img_y')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3376</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3377</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3377</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this loop, (assume 'k&lt;decode_n' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3391</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'n&gt;=3' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3412</LINE>
+        <COLUMN>20</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'coutput' is used, but may not have been initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>3438</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>6262</DEFECTCODE>
+    <DESCRIPTION>Function uses '18200' bytes of stack:  exceeds /analyze:stacksize '16384'.  Consider moving some data to heap.</DESCRIPTION>
+    <FUNCTION>stbi__jpeg_test</FUNCTION>
+    <DECORATED>?stbi__jpeg_test@@YAHPAUstbi__context@@@Z</DECORATED>
+    <FUNCLINE>3438</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>3740</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>6001</DEFECTCODE>
+    <DESCRIPTION>Using uninitialized memory 'lencodes'.</DESCRIPTION>
+    <FUNCTION>stbi__compute_huffman_codes</FUNCTION>
+    <DECORATED>?stbi__compute_huffman_codes@@YAHPAUstbi__zbuf@@@Z</DECORATED>
+    <FUNCLINE>3713</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3715</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3716</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3717</LINE>
+        <COLUMN>11</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'lencodes' is not initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3718</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3719</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3719</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3721</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3722</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3723</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3725</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3726</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3726</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3730</LINE>
+        <COLUMN>7</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3732</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3733</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'n&lt;hlit+hdist')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3734</LINE>
+        <COLUMN>10</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3735</LINE>
+        <COLUMN>16</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'c&lt;0||c&gt;=19' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3736</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'c&lt;16' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3738</LINE>
+        <COLUMN>17</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'c==16')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3739</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3740</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'lencodes' is used, but may not have been initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>stb_image.h</FILENAME>
+      <LINE>3740</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>6385</DEFECTCODE>
+    <DESCRIPTION>Reading invalid data from 'lencodes':  the readable size is '455' bytes, but '-1' bytes may be read.</DESCRIPTION>
+    <FUNCTION>stbi__compute_huffman_codes</FUNCTION>
+    <DECORATED>?stbi__compute_huffman_codes@@YAHPAUstbi__zbuf@@@Z</DECORATED>
+    <FUNCLINE>3713</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3715</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3716</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3717</LINE>
+        <COLUMN>11</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'lencodes' is an array of 455 elements (455 bytes)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3718</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3719</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3719</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3721</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3722</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3723</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3725</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3726</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3726</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3730</LINE>
+        <COLUMN>7</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3732</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3733</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'n&lt;hlit+hdist')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3734</LINE>
+        <COLUMN>10</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3735</LINE>
+        <COLUMN>16</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'c&lt;0||c&gt;=19' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3736</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'c&lt;16' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3738</LINE>
+        <COLUMN>17</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'c==16')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3739</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+        <FILENAME>stb_image.h</FILENAME>
+        <LINE>3740</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Invalid read from 'lencodes[-1]', (readable range is 0 to 454)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>4</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Object::position' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Object::{ctor}</FUNCTION>
+    <DECORATED>??0Object@@QAE@XZ</DECORATED>
+    <FUNCLINE>4</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>9</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::direction' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@XZ</DECORATED>
+    <FUNCLINE>9</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>11</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Player::currentSprite' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Player::{ctor}</FUNCTION>
+    <DECORATED>??0Player@@QAE@U?$vec@$02M$0A@@glm@@0MMU?$vec@$01M$0A@@2@1M@Z</DECORATED>
+    <FUNCLINE>11</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>object.cpp</FILENAME>
+      <LINE>28</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Bullet::state' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Bullet::{ctor}</FUNCTION>
+    <DECORATED>??0Bullet@@QAE@XZ</DECORATED>
+    <FUNCLINE>28</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::u' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT></DEFECTS>

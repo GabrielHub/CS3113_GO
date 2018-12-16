@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::u' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::size' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::textureID' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::width' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::v' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>z:\onedrive - nyu.edu\cs\gameprog\cs3113_go\final\nyucodebase</FILEPATH>
+      <FILENAME>sheetsprite.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'SheetSprite::height' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>SheetSprite::{ctor}</FUNCTION>
+    <DECORATED>??0SheetSprite@@QAE@XZ</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>
